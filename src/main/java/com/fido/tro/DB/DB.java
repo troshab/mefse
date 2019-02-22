@@ -15,7 +15,7 @@ public class DB {
     private static SerializerBase serializer = new Java();
 
     public DB() {
-        System.out.println("DB engines initialization: ");
+        Mefse.logger.info("DB engines initialization: ");
         try {
             Reflections reflections = new Reflections(EngineBase.class);
             Set<Class<? extends EngineBase>> enginesSet = reflections.getSubTypesOf(EngineBase.class);
@@ -23,12 +23,12 @@ public class DB {
             for(Class engineClass : enginesSet) {
                 EngineBase engine = (EngineBase) engineClass.newInstance();
                 engines.add(engine);
-                System.out.println("+ " + engineClass.getSimpleName() + ": " + engine.description());
+                Mefse.logger.info("+ " + engineClass.getSimpleName() + ": " + engine.description());
             }
 
-            System.out.println("--- DONE ---");
+            Mefse.logger.info("--- DONE ---");
         } catch (Exception e) {
-            System.out.println("!!! FAILED !!!");
+            Mefse.logger.info("!!! FAILED !!!");
             e.printStackTrace();
             System.exit(-1);
         }
@@ -60,10 +60,10 @@ public class DB {
 
     void list() {
         for (EngineBase engine : engines) {
-            System.out.println(engine.getClass().getSimpleName());
+            Mefse.logger.info(engine.getClass().getSimpleName());
             engine.list();
         }
-        System.out.println("point");
+        Mefse.logger.info("point");
     }
 
     public void incrementFileCounter() {
@@ -73,7 +73,7 @@ public class DB {
     public void find(String searchQuery) {
         for (EngineBase engine : engines) {
             if (engine.isSearchable()) {
-                System.out.println(engine.getClass().getSimpleName());
+                Mefse.logger.info(engine.getClass().getSimpleName());
                 engine.search(searchQuery);
             }
         }
@@ -110,7 +110,7 @@ public class DB {
 
     @Override
     protected void finalize() throws Throwable {
-        System.out.println("DB.DB successfully garbage cleaned");
+        Mefse.logger.info("DB.DB successfully garbage cleaned");
         super.finalize();
     }
 }

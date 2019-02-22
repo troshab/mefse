@@ -37,7 +37,7 @@ public class Record implements Serializable {
     }
 
     @Override
-    protected void finalize() { System.out.println("DB.Record successfully garbage cleaned"); }
+    protected void finalize() { Mefse.logger.info("DB.Record successfully garbage cleaned"); }
 
     public String getWord() {
         return word;

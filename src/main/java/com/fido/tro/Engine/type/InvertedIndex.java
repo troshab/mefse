@@ -2,6 +2,7 @@ package com.fido.tro.Engine.type;
 
 import com.fido.tro.DB.Record;
 import com.fido.tro.Engine.EngineBase;
+import com.fido.tro.Mefse;
 
 import java.util.*;
 
@@ -24,15 +25,15 @@ public class InvertedIndex extends EngineBase {
     @Override
     public void list() {
         if (data.isEmpty()) {
-            System.out.println("Indexes database is empty!");
+            Mefse.logger.info("Indexes database is empty!");
             return;
         }
         for (Map.Entry<String, Set<String>> entry : data.entrySet()) {
             String word = entry.getKey();
             Set<String> paths = entry.getValue();
-            System.out.println("Word '" + word + "':");
+            Mefse.logger.info("Word '" + word + "':");
             for (String path : paths) {
-                System.out.println(" => " + path);
+                Mefse.logger.info(" => " + path);
             }
         }
     }
@@ -86,13 +87,13 @@ public class InvertedIndex extends EngineBase {
 
     @Override
     public void searchResult() {
-        for (String filePath : query) System.out.println("File: " + filePath);
+        for (String filePath : query) Mefse.logger.info("File: " + filePath);
     }
 
     private Set<String> findSetForWord(String word, boolean invertArray) {
         Set<String> queryPartSet = data.get(word);
         if (Objects.isNull(queryPartSet)) {
-            System.out.println("Error: word '" + word + "' didn't find in inverted index");
+            Mefse.logger.info("Error: word '" + word + "' didn't find in inverted index");
             return null;
         }
 

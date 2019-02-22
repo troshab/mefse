@@ -2,6 +2,7 @@ package com.fido.tro;
 
 import com.fido.tro.DB.DB;
 import morfologik.stemming.Dictionary;
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.morfologik.MorfologikFilter;
@@ -17,6 +18,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Mefse {
+    public final static Logger logger = Logger.getLogger(Mefse.class);
+
     private static DB db = new DB();
     public static Set<String> parsedFiles = new LinkedHashSet<>();
 
@@ -34,10 +37,10 @@ public class Mefse {
 //        db.find("aa and bb and !cc or cc and !cc");
 //        db.save("d:\\finalDfinal.dat");
 //        db.load("d:\\finalDfinal.dat");
-//        System.out.println("Press Any Key To Continue...");
+//        Mefse.logger.info("Press Any Key To Continue...");
         db.find("холод and ялинки");
         //db.find("aa and bb and !cc");
-        System.out.println("Press Any Key To Continue...");
+        logger.info("Press Any Key To Continue...");
         new java.util.Scanner(System.in).nextLine();
         System.exit(1);
 
@@ -48,7 +51,7 @@ public class Mefse {
 
         boolean waitingForExit = true;
         while(waitingForExit) {
-            System.out.print("mefse > ");
+            logger.info("mefse > ");
             input = terminalInput.nextLine();
             if (!input.isEmpty()) {
                 inputArray = input.split(" ");
@@ -86,7 +89,7 @@ public class Mefse {
                             if (Objects.nonNull(engineFinded))
                                 engineFinded.load(file, serialization);
                             else
-                                System.out.println("Engine " + type + " not found!");
+                                logger.info("Engine " + type + " not found!");
                         }
                         break;
 
@@ -94,7 +97,7 @@ public class Mefse {
                         if (Objects.nonNull(engineFinded))
                             engineFinded.list();
                         else
-                            System.out.println("Engine " + type + " not found!");
+                            logger.info("Engine " + type + " not found!");
                         break;
 
                     case "save":
@@ -102,7 +105,7 @@ public class Mefse {
                             if (Objects.nonNull(engineFinded))
                                 engineFinded.save(file, serialization);
                             else
-                                System.out.println("Engine " + type + " not found!");
+                                logger.info("Engine " + type + " not found!");
                         }
                         break;
 
@@ -118,7 +121,7 @@ public class Mefse {
                             if (Arrays.asList(Dictionary.SERIALIZATIONS).contains(serialization)) {
                                 dictionary.serialization = serialization;
                             } else
-                                System.out.println("Unknown serialization");
+                                logger.info("Unknown serialization");
                         }
                         break;
 
@@ -127,19 +130,19 @@ public class Mefse {
                         break;
 
                     case "help":
-                        System.out.println("list [%type%] - to show DB");
-                        System.out.println("load [%type%] %path% - to load file (or files in dir(depth 1))");
-                        System.out.println("save [%type%] %path% - to save file");
-                        System.out.println("find [%type%] - to boolean find (supports AND OR ! commands)");
-                        System.out.println("serializer [%serializer_type%] - to change serializer");
-                        System.out.println("exit - to exit (:");
+                        logger.info("list [%type%] - to show DB");
+                        logger.info("load [%type%] %path% - to load file (or files in dir(depth 1))");
+                        logger.info("save [%type%] %path% - to save file");
+                        logger.info("find [%type%] - to boolean find (supports AND OR ! commands)");
+                        logger.info("serializer [%serializer_type%] - to change serializer");
+                        logger.info("exit - to exit (:");
                         System.out.print("\n");
-                        System.out.println("type: vocabulary, indexes, matrix");
-                        System.out.println("serializer_type: 0 - JAVA, 1 - KRYO, 2 - JACKSON, 3 - JAXB");
+                        logger.info("type: vocabulary, indexes, matrix");
+                        logger.info("serializer_type: 0 - JAVA, 1 - KRYO, 2 - JACKSON, 3 - JAXB");
                         break;
 
                     case "exit":
-                        System.out.println("Bye!");
+                        logger.info("Bye!");
                         waitingForExit = false;
                         break;
 
@@ -153,7 +156,7 @@ public class Mefse {
 
     private static boolean needArgument(String message, String[] commandArgs) {
         if (commandArgs.length < 1) {
-            System.out.println("Error: arguments needed. " + message);
+            logger.info("Error: arguments needed. " + message);
             return false;
         }
 
@@ -170,7 +173,7 @@ public class Mefse {
     }
 
     private static void needCommand() {
-        System.out.println("No command, enter 'help' to get commands list");
+        logger.info("No command, enter 'help' to get commands list");
     }
 
     public static String ucfirst(String string) {
@@ -181,7 +184,7 @@ public class Mefse {
         File file = new File(filePath);
 
         if (!file.exists()) {
-            System.out.println(filePath + " doesn't exists!");
+            logger.info(filePath + " doesn't exists!");
             return;
         }
 
@@ -233,7 +236,7 @@ public class Mefse {
         File[] fileList = directory.listFiles();
 
         if (fileList == null) {
-            System.out.println("fileList variable is null in Dictionary.loadFile");
+            logger.info("fileList variable is null in Dictionary.loadFile");
             return;
         }
 
@@ -246,16 +249,16 @@ public class Mefse {
         }
 
         if (!anyFile) {
-            System.out.println(directory.getAbsolutePath() + " is directory, but there is no files inside.");
+            logger.info(directory.getAbsolutePath() + " is directory, but there is no files inside.");
             return;
         }
 
-        System.out.println(directory.getAbsolutePath() + " is directory, listing (depth 1):");
+        logger.info(directory.getAbsolutePath() + " is directory, listing (depth 1):");
 
         for (final File fileEntry : fileList)
             if (fileEntry.isFile())
                 if (!checkFileAlreadyExist(fileEntry))
-                    System.out.println(fileEntry.getName());
+                    logger.info(fileEntry.getName());
 
         String decision = getDecision(force);
         if (decision.equals("y")) {
@@ -266,13 +269,13 @@ public class Mefse {
                 }
             }
         } else {
-            System.out.println("Dictionary load declined.");
+            logger.info("Dictionary load declined.");
         }
     }
 
     private static String getDecision(boolean force) {
         if (force) {
-            System.out.println("Force loading");
+            logger.info("Force loading");
             return "y";
         }
         String decision = "";
@@ -291,7 +294,7 @@ public class Mefse {
                 return;
 
         if (!file.canRead()) {
-            System.out.println(file.getAbsolutePath() + " can't be read!");
+            logger.info(file.getAbsolutePath() + " can't be read!");
             return;
         }
 
@@ -325,14 +328,14 @@ public class Mefse {
 
             db.incrementFileCounter();
 
-            System.out.println("File " + file.getAbsolutePath() + " successfully loaded!");
+            logger.info("File " + file.getAbsolutePath() + " successfully loaded!");
             bufferedReader.close();
             fileReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("File " + file.getAbsolutePath() + " not found!");
+            logger.info("File " + file.getAbsolutePath() + " not found!");
             e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("File " + file.getAbsolutePath() + " IO error during reading!");
+            logger.info("File " + file.getAbsolutePath() + " IO error during reading!");
             e.printStackTrace();
         }
         timeTaken(startTime);
@@ -340,11 +343,11 @@ public class Mefse {
 
     private static boolean checkFileAlreadyExist(File file) {
         if (parsedFiles.contains(file.getAbsolutePath())) {
-            System.out.println("File " + file.getAbsolutePath() + " already added.");
+            logger.info("File " + file.getAbsolutePath() + " already added.");
 
             String decision = getDecision(false);
             if (decision.equals("n")) {
-                System.out.println("Ignoring already added file.");
+                logger.info("Ignoring already added file.");
                 return true;
             }
         }
@@ -362,6 +365,6 @@ public class Mefse {
 
     public static void timeTaken(long startTime) {
         long endTime = System.currentTimeMillis();
-        System.out.println("Total execution time: " + (endTime - startTime) + "ms");
+        logger.info("Total execution time: " + (endTime - startTime) + "ms");
     }
 }

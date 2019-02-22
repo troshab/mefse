@@ -10,7 +10,7 @@ public class TwoWordInvertedIndex extends InvertedIndex {
 
     @Override
     protected boolean search(String[] queryParts) {
-        System.out.println("search is not implementable for two word inverted index");
+        Mefse.logger.info("search is not implementable for two word inverted index");
         return false;
     }
 

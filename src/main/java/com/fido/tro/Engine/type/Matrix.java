@@ -3,6 +3,7 @@ package com.fido.tro.Engine.type;
 import com.fido.tro.DB.Record;
 import com.fido.tro.Engine.EngineBase;
 import com.fido.tro.Engine.data.MatrixData;
+import com.fido.tro.Mefse;
 
 import java.util.*;
 
@@ -62,14 +63,14 @@ public class Matrix extends EngineBase {
     public void searchResult() {
         PrimitiveIterator.OfInt queryResults = query.stream().iterator();
         while(queryResults.hasNext()) {
-            System.out.println("File: " + data.header.get(queryResults.next()));
+            Mefse.logger.info("File: " + data.header.get(queryResults.next()));
         }
     }
 
     private BitSet findBitsForWord(String word, boolean invertArray) {
         BitSet queryPartBits = data.body.get(word);
         if (Objects.isNull(queryPartBits)) {
-            System.out.println("Error: word '" + word + "' didn't find in matrix");
+            Mefse.logger.info("Error: word '" + word + "' didn't find in matrix");
             return null;
         }
 
@@ -82,7 +83,7 @@ public class Matrix extends EngineBase {
 
     @Override
     public void list() {
-        System.out.println(data);
+        Mefse.logger.info(data);
     }
 
     @Override

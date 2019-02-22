@@ -20,9 +20,9 @@ public abstract class SerializerBase {
             Object loadedObject = loadObject(fis, objectClass);
             fis.close();
             if (Objects.nonNull(loadedObject))
-                System.out.println(Mefse.ucfirst(simpleName) + " loaded successfully!");
+                Mefse.logger.info(Mefse.ucfirst(simpleName) + " loaded successfully!");
             else
-                System.out.println(Mefse.ucfirst(simpleName) + " not loaded!");
+                Mefse.logger.info(Mefse.ucfirst(simpleName) + " not loaded!");
             return loadedObject;
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,7 +35,7 @@ public abstract class SerializerBase {
         try {
             FileOutputStream fos = new FileOutputStream(filePath);
             if (saveObject(fos, object))
-                System.out.println(simpleName + " saved successfully to " + filePath);
+                Mefse.logger.info(simpleName + " saved successfully to " + filePath);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

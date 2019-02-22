@@ -9,7 +9,7 @@ public class CoordinatedIndex extends InvertedIndex {
 
     @Override
     protected boolean search(String[] queryParts) {
-        System.out.println("search is not implementable for coordinated index");
+        Mefse.logger.info("search is not implementable for coordinated index");
         return false;
     }
 
@@ -32,13 +32,13 @@ public class CoordinatedIndex extends InvertedIndex {
     @Override
     public void list() {
         if (data.isEmpty()) {
-            System.out.println("Indexes database is empty!");
+            Mefse.logger.info("Indexes database is empty!");
             return;
         }
         for (Map.Entry<String, Map<String, Set<Long>>> entry : data.entrySet()) {
             String word = entry.getKey();
             Map<String, Set<Long>> paths = entry.getValue();
-            System.out.println("Word '" + word + "':");
+            Mefse.logger.info("Word '" + word + "':");
             for (Map.Entry<String, Set<Long>> pathEntry : paths.entrySet()) {
                 String path = pathEntry.getKey();
                 Set<Long> positions = pathEntry.getValue();
@@ -46,7 +46,7 @@ public class CoordinatedIndex extends InvertedIndex {
                 for (Long position : positions) {
                     positionsString.append(position).append(", ");
                 }
-                System.out.println(" => " + path + ": " + positionsString.substring(0, positionsString.length() - 2));
+                Mefse.logger.info(" => " + path + ": " + positionsString.substring(0, positionsString.length() - 2));
             }
         }
     }

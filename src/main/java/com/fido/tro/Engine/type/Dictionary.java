@@ -16,7 +16,7 @@ public class Dictionary extends EngineBase {
 
     @Override
     protected boolean search(String[] queryParts) {
-        System.out.println("search is not implementable for dictionary");
+        Mefse.logger.info("search is not implementable for dictionary");
         return false;
     }
 
@@ -28,7 +28,7 @@ public class Dictionary extends EngineBase {
     @Override
     public void list() {
         for(String word : data)
-            System.out.println("Word '" + word +"'");
+            Mefse.logger.info("Word '" + word +"'");
     }
 
     @Override

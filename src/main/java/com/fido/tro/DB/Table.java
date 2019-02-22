@@ -12,5 +12,5 @@ public class Table implements Serializable {
     Table() {}
 
     @Override
-    protected void finalize() { System.out.println("DBEngine successfully garbage cleaned"); }
+    protected void finalize() { Mefse.logger.info("DBEngine successfully garbage cleaned"); }
 }

@@ -37,7 +37,7 @@ public abstract class EngineBase implements Serializable {
                     }
 
                     if (Arrays.asList(modes).contains(queryPart)) {
-                        System.out.println("Error: wrong query (can't repeat logical operators in query)");
+                        Mefse.logger.info("Error: wrong query (can't repeat logical operators in query)");
                         return false;
                     }
 
@@ -60,7 +60,7 @@ public abstract class EngineBase implements Serializable {
 
                 default:
                     if (Arrays.stream(modes).noneMatch(queryPart::equals)) {
-                        System.out.println("Error: wrong query (can't repeat words in query)");
+                        Mefse.logger.info("Error: wrong query (can't repeat words in query)");
                         return false;
                     }
 

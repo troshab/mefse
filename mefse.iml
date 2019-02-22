@@ -30,5 +30,6 @@
     <orderEntry type="library" name="Maven: com.google.code.findbugs:annotations:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.carrot2:morfologik-stemming:2.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.carrot2:morfologik-fsa:2.1.5" level="project" />
+    <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
   </component>
 </module>
