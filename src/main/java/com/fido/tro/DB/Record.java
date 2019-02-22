@@ -1,5 +1,7 @@
 package com.fido.tro.DB;
 
+import com.fido.tro.Mefse;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -37,7 +39,10 @@ public class Record implements Serializable {
     }
 
     @Override
-    protected void finalize() { Mefse.logger.info("DB.Record successfully garbage cleaned"); }
+    protected void finalize() throws Throwable {
+        Mefse.logger.info("DB.Record successfully garbage cleaned");
+        super.finalize();
+    }
 
     public String getWord() {
         return word;

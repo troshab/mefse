@@ -88,7 +88,6 @@ public class DB {
             dbEngine = new Table();
             Mefse.parsedFiles = new LinkedHashSet<>();
             dbEngine = (Table) object;
-            System.gc();
 
             for (Record record : dbEngine.db.values())
                 for (Map.Entry<String, Set<Long>> path : record.getPaths().entrySet()) {
