@@ -1,13 +1,12 @@
 package com.fido.tro.DB;
 
-import org.cliffc.high_scale_lib.NonBlockingHashMap;
-
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Table implements Serializable {
-    public Map<String, Record> db = new NonBlockingHashMap<>();
-    Map<Integer, String> files = new NonBlockingHashMap<>();
+    public Map<String, Record> db = new HashMap<>();
+    Map<Integer, String> files = new HashMap<>();
     Integer filesCounter = 0;
 
     Table() {}

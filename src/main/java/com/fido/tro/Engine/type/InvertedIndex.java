@@ -2,20 +2,20 @@ package com.fido.tro.Engine.type;
 
 import com.fido.tro.DB.Record;
 import com.fido.tro.Engine.EngineBase;
-import org.cliffc.high_scale_lib.NonBlockingHashMap;
 
 import java.util.*;
 
 public class InvertedIndex extends EngineBase {
-    NonBlockingHashMap<String, LinkedHashSet<String>> data = new NonBlockingHashMap<>();
+    Map<String, Set<String>> data = new HashMap<>();
     private Set<String> query = new LinkedHashSet<>();
     private LinkedHashSet<String> queryAllSet;
 
     @Override
     public void add(Record record, Integer fileCounter, String filePath, Long position) {
-        LinkedHashSet<String> files = data.get(record.getWord());
-        if (Objects.isNull(files))
+        Set<String> files = data.get(record.getWord());
+        if (Objects.isNull(files)) {
             files = new LinkedHashSet<>();
+        }
 
         files.add(filePath);
         data.put(record.getWord(), files);
@@ -27,7 +27,7 @@ public class InvertedIndex extends EngineBase {
             System.out.println("Indexes database is empty!");
             return;
         }
-        for (Map.Entry<String, LinkedHashSet<String>> entry : data.entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : data.entrySet()) {
             String word = entry.getKey();
             Set<String> paths = entry.getValue();
             System.out.println("Word '" + word + "':");
@@ -44,7 +44,7 @@ public class InvertedIndex extends EngineBase {
 
     @Override
     public void initSearch(String word, boolean invertArray) {
-        LinkedHashSet<String> queryPartSet = findSetForWord(word, invertArray);
+        Set<String> queryPartSet = findSetForWord(word, invertArray);
         if (Objects.isNull(queryPartSet))
             return;
 
@@ -61,8 +61,8 @@ public class InvertedIndex extends EngineBase {
             return queryAllSet;
 
         queryAllSet = new LinkedHashSet<>();
-        Set<Map.Entry<String, LinkedHashSet<String>>> queryAllSetEntries = data.entrySet();
-        for(Map.Entry<String, LinkedHashSet<String>> queryAllSetEntry : queryAllSetEntries)
+        Set<Map.Entry<String, Set<String>>> queryAllSetEntries = data.entrySet();
+        for(Map.Entry<String, Set<String>> queryAllSetEntry : queryAllSetEntries)
             queryAllSet.addAll(queryAllSetEntry.getValue());
 
         return queryAllSet;
@@ -70,7 +70,7 @@ public class InvertedIndex extends EngineBase {
 
     @Override
     public void or(String word, boolean invertArray) {
-        LinkedHashSet<String> queryPartSet = findSetForWord(word, invertArray);
+        Set<String> queryPartSet = findSetForWord(word, invertArray);
         if (Objects.isNull(queryPartSet))
             return;
         query.addAll(queryPartSet);
@@ -78,7 +78,7 @@ public class InvertedIndex extends EngineBase {
 
     @Override
     public void and(String word, boolean invertArray) {
-        LinkedHashSet<String> queryPartSet = findSetForWord(word, invertArray);
+        Set<String> queryPartSet = findSetForWord(word, invertArray);
         if (Objects.isNull(queryPartSet))
             return;
         query.retainAll(Objects.requireNonNull(queryPartSet));
@@ -89,8 +89,8 @@ public class InvertedIndex extends EngineBase {
         for (String filePath : query) System.out.println("File: " + filePath);
     }
 
-    private LinkedHashSet<String> findSetForWord(String word, boolean invertArray) {
-        LinkedHashSet<String> queryPartSet = data.get(word);
+    private Set<String> findSetForWord(String word, boolean invertArray) {
+        Set<String> queryPartSet = data.get(word);
         if (Objects.isNull(queryPartSet)) {
             System.out.println("Error: word '" + word + "' didn't find in inverted index");
             return null;

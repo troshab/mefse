@@ -4,9 +4,10 @@ import com.fido.tro.DB.Record;
 import com.fido.tro.Engine.EngineBase;
 
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class Dictionary extends EngineBase {
-    private LinkedHashSet<String> data = new LinkedHashSet<>();
+    private Set<String> data = new LinkedHashSet<>();
 
     @Override
     public void add(Record record, Integer fileCounter, String filePath, Long position) {

@@ -4,7 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fido.tro.DB.Table;
-import com.fido.tro.Engine.data.Matrix;
+import com.fido.tro.Engine.data.MatrixData;
 import com.fido.tro.DB.Record;
 import com.fido.tro.Engine.type.CoordinatedIndex;
 import com.fido.tro.Engine.type.Dictionary;
@@ -37,8 +37,7 @@ public class KryoJava extends SerializerBase {
         kryo.register(Table.class);
         kryo.register(Record.class);
 
-        kryo.register(com.fido.tro.Engine.type.Matrix.class);
-        kryo.register(Matrix.class);
+        kryo.register(MatrixData.class);
         kryo.register(InvertedIndex.class);
         kryo.register(Dictionary.class);
         kryo.register(TwoWordInvertedIndex.class);

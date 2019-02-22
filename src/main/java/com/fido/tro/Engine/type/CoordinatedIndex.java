@@ -1,12 +1,11 @@
 package com.fido.tro.Engine.type;
 
 import com.fido.tro.DB.Record;
-import org.cliffc.high_scale_lib.NonBlockingHashMap;
 
 import java.util.*;
 
 public class CoordinatedIndex extends InvertedIndex {
-    private NonBlockingHashMap<String,  NonBlockingHashMap<String, LinkedHashSet<Long>>> data = new NonBlockingHashMap<>();
+    private Map<String, Map<String, Set<Long>>> data = new HashMap<>();
 
     @Override
     protected boolean search(String[] queryParts) {
@@ -16,14 +15,15 @@ public class CoordinatedIndex extends InvertedIndex {
 
     @Override
     public void add(Record record, Integer fileCounter, String filePath, Long position) {
-        NonBlockingHashMap<String, LinkedHashSet<Long>> paths = data.get(record.getWord());
-        if (Objects.isNull(paths))
-            paths = new NonBlockingHashMap<>();
+        Map<String, Set<Long>> paths = data.get(record.getWord());
+        if (Objects.isNull(paths)) {
+            paths = new HashMap<>();
+        }
 
-        LinkedHashSet<Long> positions = paths.get(filePath);
-        if (Objects.isNull(positions))
+        Set<Long> positions = paths.get(filePath);
+        if (Objects.isNull(positions)) {
             positions = new LinkedHashSet<>();
-
+        }
         positions.add(position);
         paths.put(filePath, positions);
         data.put(record.getWord(), paths);
@@ -35,16 +35,17 @@ public class CoordinatedIndex extends InvertedIndex {
             System.out.println("Indexes database is empty!");
             return;
         }
-        for (Map.Entry<String, NonBlockingHashMap<String, LinkedHashSet<Long>>> entry : data.entrySet()) {
+        for (Map.Entry<String, Map<String, Set<Long>>> entry : data.entrySet()) {
             String word = entry.getKey();
-            NonBlockingHashMap<String, LinkedHashSet<Long>> paths = entry.getValue();
+            Map<String, Set<Long>> paths = entry.getValue();
             System.out.println("Word '" + word + "':");
-            for (Map.Entry<String, LinkedHashSet<Long>> pathEntry : paths.entrySet()) {
+            for (Map.Entry<String, Set<Long>> pathEntry : paths.entrySet()) {
                 String path = pathEntry.getKey();
-                LinkedHashSet<Long> positions = pathEntry.getValue();
-                String positionsString = "";
-                for (Long position : positions)
-                    positionsString += position + ", ";
+                Set<Long> positions = pathEntry.getValue();
+                StringBuilder positionsString = new StringBuilder();
+                for (Long position : positions) {
+                    positionsString.append(position).append(", ");
+                }
                 System.out.println(" => " + path + ": " + positionsString.substring(0, positionsString.length() - 2));
             }
         }

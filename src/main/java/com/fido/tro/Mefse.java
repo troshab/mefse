@@ -3,34 +3,25 @@ package com.fido.tro;
 import com.fido.tro.DB.DB;
 import morfologik.stemming.Dictionary;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.analysis.morfologik.MorfologikFilter;
-import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.uk.UkrainianMorfologikAnalyzer;
-import org.apache.lucene.util.Version;
 import org.tartarus.snowball.ext.PorterStemmer;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Mefse {
     private static DB db = new DB();
     public static Set<String> parsedFiles = new LinkedHashSet<>();
 
-    static URL dictionaryUrl = UkrainianMorfologikAnalyzer.class.getClassLoader().getResource("ua/net/nlp/ukrainian.dict");
-    static Dictionary dictionary;
+    private static URL dictionaryUrl = UkrainianMorfologikAnalyzer.class.getClassLoader().getResource("ua/net/nlp/ukrainian.dict");
+    private static Dictionary dictionary;
 
     public static void main(String[] args) {
         try {
@@ -203,24 +194,24 @@ public class Mefse {
 
     private static void loadFileParalleled(File file) {
         long startTime = System.currentTimeMillis();
+        /*
         try {
-/*
             byte[] fileBytes = Files.readAllBytes(path);
             String str = new String(fileBytes);
             Analyzer analyzer = new StandardAnalyzer();
             TokenStream termSetStream =
             termSetStream = new PorterStemFilter(tokenStream);
             return preProcess(termSetStream, INDEX_TERMS_PATH);
-*/
-/*            Analyzer analyzer = new StandardAnalyzer();
+
+            Analyzer analyzer = new StandardAnalyzer();
             List<String> parallelStream = Files.readAllLines(Paths.get(file.getAbsolutePath()));
             Files.readAllLines(Paths.get(file.getAbsolutePath())).
             TokenStream stream  = analyzer.tokenStream();
             stream.reset();
             Long wordCounter = 0L;
             while (stream.incrementToken())
-                wordCounter = addWord(stream.getAttribute(CharTermAttribute.class).toString(), file.getAbsolutePath(), wordCounter);*/
-            /*AtomicReference<Long> wordCounter = new AtomicReference<>(0L);
+                wordCounter = addWord(stream.getAttribute(CharTermAttribute.class).toString(), file.getAbsolutePath(), wordCounter);
+            AtomicReference<Long> wordCounter = new AtomicReference<>(0L);
             Files.readAllLines(Paths.get(file.getAbsolutePath()))
                     .parallelStream()                               // Start streaming the lines
                     .map(line -> line.split("\\s+"))                // Split line into individual words
@@ -230,10 +221,11 @@ public class Mefse {
                     .filter(w -> w.matches("[а-їґ]+"))                 // Filter out non-word items
                     .forEach(word -> {                              // Use an AtomicAdder to tally word counts
                         wordCounter.set(addWord(word, file.getAbsolutePath(), wordCounter.get()));
-                    });*/
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
+        */
         timeTaken(startTime);
     }
 

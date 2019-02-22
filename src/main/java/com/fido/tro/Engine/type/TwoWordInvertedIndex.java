@@ -25,10 +25,12 @@ public class TwoWordInvertedIndex extends InvertedIndex {
             previousWord = word.getWord();
             return;
         }
+
         String key = previousWord + " " + word.getWord();
-        LinkedHashSet<String> files = data.get(key);
-        if (Objects.isNull(files))
+        Set<String> files = data.get(key);
+        if (Objects.isNull(files)) {
             files = new LinkedHashSet<>();
+        }
 
         files.add(filePath);
         data.put(key, files);

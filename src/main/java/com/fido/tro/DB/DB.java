@@ -12,7 +12,7 @@ public class DB {
     private static Table dbEngine = new Table();
     private List<EngineBase> engines = new LinkedList<>();
 
-    static SerializerBase serializer = new Java();
+    private static SerializerBase serializer = new Java();
 
     public DB() {
         System.out.println("DB engines initialization: ");
@@ -45,8 +45,9 @@ public class DB {
         Record record;
 
         record = dbEngine.db.get(word);
-        if (Objects.isNull(record))
+        if (Objects.isNull(record)) {
             record = new Record(word);
+        }
 
         record.addPosition(filePath, dbEngine.filesCounter, position);
         dbEngine.db.put(word, record);
@@ -108,5 +109,8 @@ public class DB {
     }
 
     @Override
-    protected void finalize() { System.out.println("DB.DB successfully garbage cleaned"); }
+    protected void finalize() throws Throwable {
+        System.out.println("DB.DB successfully garbage cleaned");
+        super.finalize();
+    }
 }

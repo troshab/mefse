@@ -1,14 +1,13 @@
 package com.fido.tro.Engine.data;
 
-import org.cliffc.high_scale_lib.NonBlockingHashMap;
-
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Map;
 
-public class Matrix implements Serializable {
-    public NonBlockingHashMap<Integer, String> header = new NonBlockingHashMap<>();
-    public NonBlockingHashMap<String, BitSet> body = new NonBlockingHashMap<>();
+public class MatrixData implements Serializable {
+    public Map<Integer, String> header = new HashMap<>();
+    public Map<String, BitSet> body = new HashMap<>();
 
     public String toString() {
         StringBuilder result = new StringBuilder("Header:\n");

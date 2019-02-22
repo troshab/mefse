@@ -1,12 +1,10 @@
 package com.fido.tro.DB;
 
-import org.cliffc.high_scale_lib.NonBlockingHashMap;
-
 import java.io.Serializable;
 import java.util.*;
 
 public class Record implements Serializable {
-    String word;
+    private String word;
 
     Map<String, Set<Long>> paths;
 
@@ -19,7 +17,7 @@ public class Record implements Serializable {
 
     void addPosition(String filePath, Integer col, Long position) {
         if (Objects.isNull(paths))
-            paths = new NonBlockingHashMap<>();
+            paths = new HashMap<>();
 
         Set<Long> positions = paths.get(filePath);
         if (Objects.isNull(positions))
@@ -45,7 +43,7 @@ public class Record implements Serializable {
         return word;
     }
 
-    public Map<String, Set<Long>> getPaths() {
+    Map<String, Set<Long>> getPaths() {
         return paths;
     }
 
