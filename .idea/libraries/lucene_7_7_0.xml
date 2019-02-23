@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="lucene-7.7.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/lucene-analyzers-common-7.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lucene-analyzers-morfologik-7.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lucene-core-7.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lucene-queryparser-7.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/morfologik-ukrainian-search-3.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
