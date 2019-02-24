@@ -1,32 +1,19 @@
-package com.fido.tro.engine;
+package com.fido.tro.data.indices;
 
-import com.fido.tro.db.Record;
-import org.apache.log4j.Logger;
-
-import java.io.Serializable;
 import java.util.Arrays;
 
-public abstract class EngineBase implements Serializable {
-    private final static Logger LOGGER = Logger.getLogger(EngineBase.class);
+public abstract class Searchable implements Index {
+    abstract void initSearch(String queryPart, boolean invertArray);
+    abstract void or(String queryPart, boolean invertArray);
+    abstract void and(String queryPart, boolean invertArray);
+    abstract void searchResult();
 
-    public abstract String description();
-    public abstract void add(Record record, Integer fileCounter, String filePath, Long position);
-    public abstract void list();
-    public abstract boolean isSearchable();
-
-    public void initSearch(String queryPart, boolean invertArray) {}
-    public void or(String queryPart, boolean invertArray) {}
-    public void and(String queryPart, boolean invertArray) {}
-    public void searchResult() {
-
-    }
-
-    boolean search(String condition) {
+    public boolean search(String condition) {
         String[] queryParts = condition.replaceAll("\\s+", " ").replaceAll("!\\s*", "!").split(" ");
         return search(queryParts);
     }
 
-    protected boolean search(String[] queryParts) {
+    private boolean search(String[] queryParts) {
         String mode = "start";
         String[] modes = {"start", "and", "or"};
 
@@ -42,7 +29,7 @@ public abstract class EngineBase implements Serializable {
                     }
 
                     if (Arrays.asList(modes).contains(queryPart)) {
-                        LOGGER.error("Error: wrong query (can't repeat logical operators in query)");
+                        System.err.println("Error: wrong query (can't repeat logical operators in query)");
                         return false;
                     }
 
@@ -65,7 +52,7 @@ public abstract class EngineBase implements Serializable {
 
                 default:
                     if (Arrays.stream(modes).noneMatch(queryPart::equals)) {
-                        LOGGER.error("Error: wrong query (can't repeat words in query)");
+                        System.err.println("Error: wrong query (can't repeat words in query)");
                         return false;
                     }
 

@@ -1,12 +1,12 @@
-package com.fido.tro.serializer.type;
+package com.fido.tro.serializers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fido.tro.serializer.SerializerBase;
+import com.fido.tro.serializers.AbstractSerializer;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-public class Jackson extends SerializerBase {
+public class Json extends AbstractSerializer {
     @Override
     public String description() {
         return "This is the home page of the Jackson Project, formerly known as the standard JSON library for Java (or JVM platform in general), or, as the \"best JSON parser for Java.\" Or simply as \"JSON for Java.\"";

@@ -1,9 +1,5 @@
 package com.fido.tro.utils;
 
-import com.fido.tro.cli.CliUtils;
-import com.fido.tro.db.DB;
-import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +11,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class FileUtils {
-    private final static Logger LOGGER = Logger.getLogger(FileUtils.class);
     private static List<String> parsedFiles = new LinkedList<>();
 
     public static List<String> getPaths(String filename) {
@@ -23,7 +18,7 @@ public class FileUtils {
         List<String> paths = new LinkedList<>();
 
         if (!file.exists()) {
-            LOGGER.error(filename + " doesn't exists!");
+            System.err.println(filename + " doesn't exists!");
             return new LinkedList<>();
         }
 
@@ -46,7 +41,7 @@ public class FileUtils {
         try {
             return Files.lines(path);
         } catch (IOException exception) {
-            LOGGER.fatal("Can't get lines stream of file " + filepath, exception);
+            exception.printStackTrace();
         }
         return null;
     }

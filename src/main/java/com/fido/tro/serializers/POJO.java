@@ -1,13 +1,13 @@
-package com.fido.tro.serializer.type;
+package com.fido.tro.serializers;
 
-import com.fido.tro.serializer.SerializerBase;
+import com.fido.tro.serializers.AbstractSerializer;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class Java extends SerializerBase {
+public class POJO extends AbstractSerializer {
     @Override
     public String description() {
         return "Object Serialization supports the encoding of objects and the objects reachable from them, into a stream of bytes. Serialization also supports the complementary reconstruction of the object graph from a stream. Serialization is used for lightweight persistence and for communication via sockets or Java Remote Method Invocation (Java RMI).";

@@ -25,7 +25,6 @@
         <jackson.version>2.9.8</jackson.version>
         <reflections.version>0.9.10</reflections.version>
         <morfologik.version>2.1.5</morfologik.version>
-        <log4j.version>1.2.17</log4j.version>
     </properties>
 
     <dependencies>
@@ -53,11 +52,6 @@
             <groupId>org.carrot2</groupId>
             <artifactId>morfologik-stemming</artifactId>
             <version>${morfologik.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
         </dependency>
     </dependencies>
 </project>

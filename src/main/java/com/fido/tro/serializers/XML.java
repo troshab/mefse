@@ -1,16 +1,15 @@
-package com.fido.tro.serializer.type;
+package com.fido.tro.serializers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fido.tro.serializer.SerializerBase;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-public class JacksonXml extends SerializerBase {
+public class XML extends AbstractSerializer {
     @Override
     public String description() {
-        return "This projects contains Jackson extension component for reading and writing XML encoded data. Further, the goal is to emulate how JAXB data-binding works with \"Code-first\" approach (that is, no support is added for \"Schema-first\" approach).";
+        return "This projects contains Jackson extension component for reading and writing XML encoded structure. Further, the goal is to emulate how JAXB structure-binding works with \"Code-first\" approach (that is, no support is added for \"Schema-first\" approach).";
     }
 
     @Override

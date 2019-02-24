@@ -1,14 +1,10 @@
 package com.fido.tro.cli;
 
-import org.apache.log4j.Logger;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CliCommand {
-    private final static Logger LOGGER = Logger.getLogger(CliCommand.class);
-
     private final String DEFAULT_COMMAND_ENGINE_TYPE = "dictionary";
 
     private String command;
@@ -21,8 +17,8 @@ public class CliCommand {
     public String getFilename() { return filename; }
 
     private List<String> commandArguments;
-    public List<String> getCommandArguments() { return commandArguments; }
-    Integer getCommandArgumentsCount() { return commandArguments.size(); }
+    private List<String> getCommandArguments() { return commandArguments; }
+    Integer getCommandArgumentsCount() { return getCommandArguments().size(); }
 
     public CliCommand(String commandLine) {
         parseCommandLine(commandLine);
@@ -68,11 +64,7 @@ public class CliCommand {
 
     public String getCommandArgument(Integer commandArgumentNumber) {
         if (getCommandArgumentsCount() < commandArgumentNumber) {
-            try {
-                throw new CliCommandNotEnoughtArgumentsException();
-            } catch (CliCommandNotEnoughtArgumentsException exception) {
-                LOGGER.error("Called argument with number less than arguments count", exception);
-            }
+            System.err.println("Called argument with number less than arguments count");
         }
         return commandArguments.get(commandArgumentNumber);
     }
@@ -80,8 +72,7 @@ public class CliCommand {
     public String getArgumentsLine() {
         StringBuilder line = new StringBuilder();
         for(String argument : commandArguments) {
-            line.append(" ")
-                .append(argument);
+            line.append(" ").append(argument);
         }
         return line.substring(1);
     }

@@ -1,16 +1,9 @@
-package com.fido.tro.serializer.type;
+package com.fido.tro.serializers;
 
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.fido.tro.db.Table;
-import com.fido.tro.engine.data.MatrixData;
-import com.fido.tro.db.Record;
-import com.fido.tro.engine.type.CoordinatedIndex;
-import com.fido.tro.engine.type.Dictionary;
-import com.fido.tro.engine.type.InvertedIndex;
-import com.fido.tro.engine.type.TwoWordInvertedIndex;
-import com.fido.tro.serializer.SerializerBase;
+import com.fido.tro.data.Entity;
+import com.fido.tro.data.Storage;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,31 +11,15 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
-public class KryoJava extends SerializerBase {
+public class Kryo extends AbstractSerializer {
     @Override
     public String description() {
         return "Kryo is a fast and efficient binary object graph serialization framework for Java. The goals of the project are high speed, low size, and an easy to use API.";
     }
 
-    private void registerKryoClasses(Kryo kryo) {
-        /*kryo.register(Map.class);
-        kryo.register(LinkedHashSet.class);
-        kryo.register(MatrixData.class);
-        kryo.register(Integer.class);
-        kryo.register(Integer[].class);
-        kryo.register(String.class);
-        kryo.register(HashMap.class);
-        kryo.register(ArrayList.class);
-        kryo.register(Dictionary.class);*/
-        kryo.register(Table.class);
-        kryo.register(Record.class);
-
-        kryo.register(MatrixData.class);
-        kryo.register(InvertedIndex.class);
-        kryo.register(Dictionary.class);
-        kryo.register(TwoWordInvertedIndex.class);
-        kryo.register(CoordinatedIndex.class);
-
+    private void registerKryoClasses(com.esotericsoftware.kryo.Kryo kryo) {
+        kryo.register(Storage.class);
+        kryo.register(Entity.class);
         kryo.register(HashMap.class);
         kryo.register(LinkedHashSet.class);
         kryo.register(BitSet.class);
@@ -51,7 +28,7 @@ public class KryoJava extends SerializerBase {
 
     @Override
     public Object loadObject(FileInputStream fis, Class objectClass) {
-        Kryo kryo = new Kryo();
+        com.esotericsoftware.kryo.Kryo kryo = new com.esotericsoftware.kryo.Kryo();
         registerKryoClasses(kryo);
 
         Input input = new Input(fis);
@@ -64,7 +41,7 @@ public class KryoJava extends SerializerBase {
     @Override
     public boolean saveObject(FileOutputStream fos, Object engine) {
         try {
-            Kryo kryo = new Kryo();
+            com.esotericsoftware.kryo.Kryo kryo = new com.esotericsoftware.kryo.Kryo();
             registerKryoClasses(kryo);
 
             Output output = new Output(fos);
