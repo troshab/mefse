@@ -3,17 +3,16 @@ package com.fido.tro.data.indices;
 import com.fido.tro.data.Entity;
 import com.fido.tro.data.fields.Filepath;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Inverted extends Searchable {
 
-    Map<String, Filepath> data = new ConcurrentHashMap<>();
+    Map<String, Filepath> data = new HashMap<>();
 
     private Filepath query = new Filepath();
-    private Filepath queryAllSet = new Filepath();
 
     public String description() {
         return "list of words and files in which they are appeared";
@@ -102,12 +101,10 @@ public class Inverted extends Searchable {
     }
 
     private Filepath getAllFilepath() {
-        if (Objects.nonNull(queryAllSet))
-            return queryAllSet;
+        Filepath queryAllSet = new Filepath();
 
-        queryAllSet = new Filepath();
         Set<Map.Entry<String, Filepath>> queryAllSetEntries = data.entrySet();
-        for(Map.Entry<String, Filepath> queryAllSetEntry : queryAllSetEntries) {
+        for (Map.Entry<String, Filepath> queryAllSetEntry : queryAllSetEntries) {
             queryAllSet.addAll(queryAllSetEntry.getValue());
         }
 

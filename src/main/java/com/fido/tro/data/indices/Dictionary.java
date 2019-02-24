@@ -21,7 +21,7 @@ public class Dictionary implements Index {
     }
 
     public void list() {
-        for(String word : data) {
+        for (String word : data) {
             System.out.println("Word '" + word + "'");
         }
     }

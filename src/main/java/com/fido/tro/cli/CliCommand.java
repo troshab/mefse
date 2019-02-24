@@ -8,42 +8,45 @@ public class CliCommand {
     private final String DEFAULT_COMMAND_ENGINE_TYPE = "dictionary";
 
     private String command;
-    public String getCommand() { return command; }
-
     private String engineType = DEFAULT_COMMAND_ENGINE_TYPE;
-    public String getEngineType() { return engineType; }
-
     private String filename = "";
-    public String getFilename() { return filename; }
-
+    private int commandArgumentsCount = 0;
     private List<String> commandArguments;
-    private List<String> getCommandArguments() { return commandArguments; }
-    Integer getCommandArgumentsCount() { return getCommandArguments().size(); }
 
     public CliCommand(String commandLine) {
         parseCommandLine(commandLine);
         defineEngineTypeAndFilename();
     }
 
-    private void defineEngineTypeAndFilename() {
-        if (getCommandArgumentsCount() != 0) {
-            filename = commandArguments.get(0);
-        }
+    public String getCommand() {
+        return command;
+    }
 
-        if (!command.equals("find")) {
-            if (command.equals("list")) {
-                if (getCommandArgumentsCount() > 0)
-                    engineType = commandArguments.get(0).toLowerCase();
-                    commandArguments.remove(engineType);
-            } else {
-                if (getCommandArgumentsCount() >= 2) {
-                    engineType = commandArguments.get(0).toLowerCase();
-                    filename = commandArguments.get(1);
-                    commandArguments.remove(engineType);
-                    commandArguments.remove(filename);
-                }
+    public String getEngineType() {
+        return engineType;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    Integer getCommandArgumentsCount() {
+        return commandArgumentsCount;
+    }
+
+    private void defineEngineTypeAndFilename() {
+        if (command.equals("list") || command.equals("find")) {
+            commandArguments.remove(0);
+            if (getCommandArgumentsCount() > 0) {
+                engineType = commandArguments.get(0).toLowerCase();
+            }
+            commandArguments.remove(engineType);
+        } else {
+            if (getCommandArgumentsCount() > 0) {
+                filename = commandArguments.get(1);
             }
         }
+        commandArgumentsCount = commandArguments.size();
     }
 
     private void parseCommandLine(String commandLine) {
@@ -56,6 +59,7 @@ public class CliCommand {
     private void parseCommandArguments(String[] commandLineSplit) {
         commandArguments = new LinkedList<>();
         commandArguments.addAll(Arrays.asList(commandLineSplit));
+        commandArgumentsCount = commandArguments.size() - 1;
     }
 
     private void parseCommand(String[] commandLineSplit) {
@@ -71,7 +75,7 @@ public class CliCommand {
 
     public String getArgumentsLine() {
         StringBuilder line = new StringBuilder();
-        for(String argument : commandArguments) {
+        for (String argument : commandArguments) {
             line.append(" ").append(argument);
         }
         return line.substring(1);

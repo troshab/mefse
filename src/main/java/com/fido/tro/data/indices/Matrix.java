@@ -3,7 +3,10 @@ package com.fido.tro.data.indices;
 import com.fido.tro.data.Entity;
 import com.fido.tro.data.fields.MatrixRow;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class Matrix extends Searchable {
     private Map<Integer, String> header = new HashMap<>();
@@ -27,13 +30,14 @@ public class Matrix extends Searchable {
     public String description() {
         return "matrix-like variation of inverted index";
     }
+
     public boolean isSearchable(String query) {
         search(query);
         return true;
     }
 
     public void add(Entity entity, int fileNumber, String filePath, Long position) {
-        header.put(fileNumber, filePath);
+        header.put(fileNumber - 1, filePath);
         body.put(entity.getTerm(), entity.getMatrixRow());
     }
 
@@ -65,6 +69,7 @@ public class Matrix extends Searchable {
             return;
         }
         query.or(Objects.requireNonNull(queryPartBits));
+        System.err.println("ored");
     }
 
     public void and(String word, boolean invertArray) {
@@ -73,13 +78,11 @@ public class Matrix extends Searchable {
             return;
         }
         query.and(Objects.requireNonNull(queryPartBits));
+        System.err.println("anded");
     }
 
     public void searchResult() {
-        PrimitiveIterator.OfInt queryResults = query.stream().iterator();
-        while (queryResults.hasNext()) {
-            System.out.println("File: " + header.get(queryResults.next()));
-        }
+        query.stream().forEach(key -> System.out.println("File: " + header.get(key)));
     }
 
     private MatrixRow findMatrixRow(String word, boolean invertArray) {
@@ -90,7 +93,7 @@ public class Matrix extends Searchable {
         }
 
         if (invertArray) {
-            queryPartBits.flip(0, queryPartBits.length());
+            queryPartBits.flip(0, header.size());
         }
 
         return queryPartBits;

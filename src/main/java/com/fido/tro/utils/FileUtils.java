@@ -11,8 +11,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class FileUtils {
-    private static List<String> parsedFiles = new LinkedList<>();
-
     public static List<String> getPaths(String filename) {
         File file = new File(filename);
         List<String> paths = new LinkedList<>();
@@ -22,7 +20,7 @@ public class FileUtils {
             return new LinkedList<>();
         }
 
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             File[] fileList = file.listFiles();
             for (final File fileEntry : Objects.requireNonNull(fileList)) {
                 if (fileEntry.isFile()) {
@@ -32,7 +30,6 @@ public class FileUtils {
         } else {
             paths.add(file.getAbsolutePath());
         }
-        parsedFiles.addAll(paths);
         return paths;
     }
 

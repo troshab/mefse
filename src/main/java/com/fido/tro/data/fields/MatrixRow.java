@@ -5,12 +5,13 @@ import java.util.stream.IntStream;
 
 public class MatrixRow {
     private BitSet matrixRow;
-    private BitSet getMatrixRow() {
-        return matrixRow;
-    }
 
     public MatrixRow() {
         this.matrixRow = new BitSet();
+    }
+
+    private BitSet getMatrixRow() {
+        return matrixRow;
     }
 
     public void set(int column) {

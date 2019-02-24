@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class CliUtils {
     private final static Scanner scanner = new Scanner(System.in);
 
-    public static boolean decide(boolean forced) {
+    public static boolean decide(final boolean forced) {
         if (forced) {
             System.err.println("Forced");
             return true;
@@ -23,12 +23,12 @@ public class CliUtils {
         System.err.println("No command, enter 'help' to get commands list");
     }
 
-    public static String ask(String prompt) {
+    public static String ask(final String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
     }
 
-    public static boolean argumentsCountNeeded(String message, CliCommand command, Integer argumentsNeededCount) {
+    public static boolean argumentsCountNeeded(final String message, final CliCommand command, final Integer argumentsNeededCount) {
         Integer commandArgumentsCount = command.getCommandArgumentsCount();
         if (argumentsNeededCount > commandArgumentsCount) {
             System.err.println(message);

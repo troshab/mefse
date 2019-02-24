@@ -3,14 +3,14 @@ package com.fido.tro;
 import com.fido.tro.cli.CliCommand;
 import com.fido.tro.cli.CliUtils;
 
-public class Router {
+class Router {
     private final Controller engine = new Controller();
 
-    public String getCommandLine() {
+    String getCommandLine() {
         return CliUtils.ask("mefse > ");
     }
 
-    public boolean execCommandLine(final String commandLine) {
+    boolean execCommandLine(final String commandLine) {
         CliCommand command = new CliCommand(commandLine);
         boolean exit = false;
         switch (command.getCommand()) {
@@ -39,7 +39,7 @@ public class Router {
                 break;
 
             case "find":
-                if (CliUtils.argumentsCountNeeded("engine indices in which will be search, search query", command, 2)) {
+                if (CliUtils.argumentsCountNeeded("engine indices in which will be search, search query", command, 1)) {
                     engine.find(command.getEngineType(), command.getArgumentsLine());
                 }
                 break;

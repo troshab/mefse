@@ -3,15 +3,17 @@ package com.fido.tro.data;
 import com.fido.tro.serializers.Serializer;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 public class Storage implements Serializable {
-    public Map<String, Entity> data = new ConcurrentHashMap<>();
-    Map<Integer, String> files = new ConcurrentHashMap<>();
-    public Integer filesCounter = 0;
+    public Map<String, Entity> data = new HashMap<>();
+    public Set<String> files = new LinkedHashSet<>();
 
-    public Storage() {}
+    public Storage() {
+    }
 
     @Override
     protected void finalize() throws Throwable {

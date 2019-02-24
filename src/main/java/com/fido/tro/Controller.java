@@ -1,9 +1,8 @@
 package com.fido.tro;
 
-import com.fido.tro.data.Storage;
 import com.fido.tro.data.Entity;
+import com.fido.tro.data.Storage;
 import com.fido.tro.data.indices.*;
-import com.fido.tro.data.indices.Dictionary;
 import com.fido.tro.serializers.*;
 import com.fido.tro.utils.FileUtils;
 import org.apache.lucene.analysis.Analyzer;
@@ -13,12 +12,15 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 public class Controller {
-    private Storage db = new Storage();
+    private Storage storage = new Storage();
     private Serializer serializer = new Serializer();
     private Map<String, Index> indices = new HashMap<>();
 
@@ -28,6 +30,8 @@ public class Controller {
         indices.put("dictionary", new Dictionary());
         indices.put("inverted", new Inverted());
         indices.put("twoword", new TwoWord());
+        indices.put("trigram", new Trigram());
+        indices.put("suffixtree", new SuffixTree());
 
         serializer.add(new Kryo());
         serializer.add(new POJO());
@@ -39,7 +43,7 @@ public class Controller {
         List<String> filepaths = FileUtils.getPaths(filename);
 
         Analyzer analyzer = new StandardAnalyzer();
-        for(String filepath : filepaths) {
+        for (String filepath : filepaths) {
             Stream<String> lines = FileUtils.linesStream(filepath);
             AtomicLong wordPosition = new AtomicLong(0L);
             Objects.requireNonNull(lines).forEach(line -> {
@@ -67,25 +71,28 @@ public class Controller {
     public void add(String word, String filePath, Long position) {
         Entity record;
 
-        record = db.data.get(word);
+        record = storage.data.get(word);
         if (Objects.isNull(record)) {
             record = new Entity(word);
         }
-
-        record.addPosition(filePath, db.filesCounter, position);
-        db.data.put(word, record);
-        addToIndices(record, db.filesCounter++, filePath, position);
+        storage.files.add(filePath);
+        int filesCount = storage.files.size();
+        record.addPosition(filePath, filesCount - 1, position);
+        storage.data.put(word, record);
+        addToIndices(record, filesCount, filePath, position);
     }
 
-    private void addToIndices(Entity record, Integer filesCounter, String filePath, Long position) {
-        for(Index index : indices.values())
+    private void addToIndices(Entity record, int filesCounter, String filePath, Long position) {
+        for (Index index : indices.values())
             index.add(record, filesCounter, filePath, position);
     }
 
     void find(String engineType, String query) {
         Index index = indices.get(engineType);
         if (Objects.nonNull(index)) {
-            index.isSearchable(query);
+            if (!index.isSearchable(query)) {
+                System.err.println("Search in " + engineType + " not implemented");
+            }
         } else {
             System.err.println("engine " + engineType + " not found");
         }
@@ -104,7 +111,7 @@ public class Controller {
     }
 
     void save(String filename) {
-        db.save(filename, serializer);
+        storage.save(filename, serializer);
     }
 
     String listSerializers() {

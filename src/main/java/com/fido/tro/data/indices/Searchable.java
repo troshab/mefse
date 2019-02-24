@@ -2,13 +2,16 @@ package com.fido.tro.data.indices;
 
 import java.util.Arrays;
 
-public abstract class Searchable implements Index {
+abstract class Searchable implements Index {
     abstract void initSearch(String queryPart, boolean invertArray);
+
     abstract void or(String queryPart, boolean invertArray);
+
     abstract void and(String queryPart, boolean invertArray);
+
     abstract void searchResult();
 
-    public boolean search(String condition) {
+    boolean search(String condition) {
         String[] queryParts = condition.replaceAll("\\s+", " ").replaceAll("!\\s*", "!").split(" ");
         return search(queryParts);
     }

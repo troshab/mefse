@@ -18,6 +18,7 @@ public class CliBenchmark {
     public long timeTaken() {
         return timeTaken(false);
     }
+
     private long timeTaken(boolean showTime) {
         final long endTime = System.currentTimeMillis();
         final long timeTaken = endTime - beginTime;

@@ -1,7 +1,5 @@
 package com.fido.tro.serializers;
 
-import com.fido.tro.serializers.AbstractSerializer;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
