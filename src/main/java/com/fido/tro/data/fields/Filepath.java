@@ -1,5 +1,6 @@
 package com.fido.tro.data.fields;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class Filepath implements Iterable<String> {
     }
 
     @Override
+    @Nonnull
     public Iterator<String> iterator() {
         return filepath.iterator();
     }

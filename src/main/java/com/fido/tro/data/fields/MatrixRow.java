@@ -18,10 +18,6 @@ public class MatrixRow {
         matrixRow.set(column);
     }
 
-    public int length() {
-        return matrixRow.length();
-    }
-
     public void flip(int fromIndex, int toIndex) {
         matrixRow.flip(fromIndex, toIndex);
     }

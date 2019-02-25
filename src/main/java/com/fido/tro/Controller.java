@@ -31,7 +31,6 @@ public class Controller {
         indices.put("inverted", new Inverted());
         indices.put("twoword", new TwoWord());
         indices.put("trigram", new Trigram());
-        indices.put("suffixtree", new SuffixTree());
 
         serializer.add(new Kryo());
         serializer.add(new POJO());
@@ -58,8 +57,9 @@ public class Controller {
                     exception.printStackTrace();
                 }
             });
+            System.out.println("Added file " + filepath);
         }
-        System.out.println("populated");
+        System.out.println("Populated");
     }
 
     @Override
@@ -90,6 +90,7 @@ public class Controller {
     void find(String engineType, String query) {
         Index index = indices.get(engineType);
         if (Objects.nonNull(index)) {
+            System.out.println("Search query: " + query);
             if (!index.isSearchable(query)) {
                 System.err.println("Search in " + engineType + " not implemented");
             }
@@ -108,6 +109,7 @@ public class Controller {
     }
 
     void load(String filename) {
+        storage.load(filename, serializer);
     }
 
     void save(String filename) {

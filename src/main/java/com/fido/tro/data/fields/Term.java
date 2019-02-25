@@ -7,10 +7,6 @@ public class Term {
         term = constructorTerm;
     }
 
-    public Term() {
-        term = "";
-    }
-
     public String getTerm() {
         return term;
     }

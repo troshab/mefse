@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Coordinated extends Inverted {
-    private Map<String, FilepathWithPositions> data = new HashMap<>();
+    protected Map<String, FilepathWithPositions> data = new HashMap<>();
 
     @Override
     public void list() {

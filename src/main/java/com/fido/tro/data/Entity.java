@@ -10,8 +10,8 @@ import java.io.Serializable;
 
 public class Entity implements Serializable {
     private Term term;
-    private Filepath filepaths;
-    private FilepathWithPositions filepathsWithPositions;
+    private Filepath filepath;
+    private FilepathWithPositions filepathWithPositions;
     private MatrixRow matrixRow;
 
     public Entity(String word) {
@@ -23,27 +23,19 @@ public class Entity implements Serializable {
         return term.getTerm();
     }
 
-    Filepath getFilepaths() {
-        return filepaths;
-    }
-
-    FilepathWithPositions getFilepathsWithPositions() {
-        return filepathsWithPositions;
-    }
-
     public MatrixRow getMatrixRow() {
         return matrixRow;
     }
 
     private void constructorAdditional() {
-        filepaths = new Filepath();
-        filepathsWithPositions = new FilepathWithPositions();
+        filepath = new Filepath();
+        filepathWithPositions = new FilepathWithPositions();
         matrixRow = new MatrixRow();
     }
 
     public void addPosition(String filePath, int column, Long position) {
-        filepaths.add(filePath);
-        filepathsWithPositions.get(filePath).add(position);
+        filepath.add(filePath);
+        filepathWithPositions.get(filePath).add(position);
         matrixRow.set(column);
     }
 

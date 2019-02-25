@@ -24,4 +24,8 @@ public class Storage implements Serializable {
     public void save(String filename, Serializer serializer) {
         serializer.getSerializer().save(filename, data);
     }
+
+    public void load(String filename, Serializer serializer) {
+        serializer.getSerializer().load(filename, data);
+    }
 }

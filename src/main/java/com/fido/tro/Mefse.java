@@ -7,8 +7,8 @@ public class Mefse {
         String commandLine;
 
         Router router = new Router();
-        router.execCommandLine("populate d:\\d");
-        router.execCommandLine("find suffixtree ca");
+        router.execCommandLine("populate d:\\df");
+        //router.execCommandLine("find trigram necine and ectarin");
         //router.execCommandLine("save d:\\saved.db");
         //router.execCommandLine("exit");
         do {

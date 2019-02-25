@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class Inverted extends Searchable {
 
-    Map<String, Filepath> data = new HashMap<>();
+    protected Map<String, Filepath> data = new HashMap<>();
 
     private Filepath query = new Filepath();
 
@@ -85,7 +85,7 @@ public class Inverted extends Searchable {
         }
     }
 
-    private Filepath findSetForWord(String word, boolean invertArray) {
+    protected Filepath findSetForWord(String word, boolean invertArray) {
         Filepath queryPartSet = data.get(word);
         if (Objects.isNull(queryPartSet)) {
             System.err.println("Error: word '" + word + "' didn't find in inverted index");
@@ -100,7 +100,7 @@ public class Inverted extends Searchable {
         return queryPartSet;
     }
 
-    private Filepath getAllFilepath() {
+    Filepath getAllFilepath() {
         Filepath queryAllSet = new Filepath();
 
         Set<Map.Entry<String, Filepath>> queryAllSetEntries = data.entrySet();

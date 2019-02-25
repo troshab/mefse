@@ -17,7 +17,7 @@ public class TwoWord extends Inverted {
         return false;
     }
 
-    public void add(Entity entity, Integer fileCounter, String filePath, Long position) {
+    public void add(Entity entity, String filePath) {
         if (!previousPath.equals(filePath)) {
             previousWord = "";
             previousPath = filePath;

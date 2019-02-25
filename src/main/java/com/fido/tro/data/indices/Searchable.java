@@ -11,12 +11,12 @@ abstract class Searchable implements Index {
 
     abstract void searchResult();
 
-    boolean search(String condition) {
+    void search(String condition) {
         String[] queryParts = condition.replaceAll("\\s+", " ").replaceAll("!\\s*", "!").split(" ");
-        return search(queryParts);
+        search(queryParts);
     }
 
-    private boolean search(String[] queryParts) {
+    private void search(String[] queryParts) {
         String mode = "start";
         String[] modes = {"start", "and", "or"};
 
@@ -33,7 +33,7 @@ abstract class Searchable implements Index {
 
                     if (Arrays.asList(modes).contains(queryPart)) {
                         System.err.println("Error: wrong query (can't repeat logical operators in query)");
-                        return false;
+                        return;
                     }
 
                     switch (mode) {
@@ -56,7 +56,7 @@ abstract class Searchable implements Index {
                 default:
                     if (Arrays.stream(modes).noneMatch(queryPart::equals)) {
                         System.err.println("Error: wrong query (can't repeat words in query)");
-                        return false;
+                        return;
                     }
 
                     mode = queryPart.toLowerCase();
@@ -66,6 +66,5 @@ abstract class Searchable implements Index {
 
         searchResult();
 
-        return true;
     }
 }

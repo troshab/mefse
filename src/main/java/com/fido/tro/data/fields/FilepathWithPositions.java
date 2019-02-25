@@ -5,25 +5,25 @@ import java.util.Map;
 import java.util.Set;
 
 public class FilepathWithPositions {
-    private Map<String, Positions> filepathsWithPositions;
+    private Map<String, Positions> filepathWithPositions;
 
     public FilepathWithPositions() {
-        filepathsWithPositions = new HashMap<>();
+        filepathWithPositions = new HashMap<>();
     }
 
     public Positions get(String key) {
         if (!exist(key)) {
-            filepathsWithPositions.put(key, new Positions());
+            filepathWithPositions.put(key, new Positions());
         }
 
-        return filepathsWithPositions.get(key);
+        return filepathWithPositions.get(key);
     }
 
     private boolean exist(String key) {
-        return filepathsWithPositions.containsKey(key);
+        return filepathWithPositions.containsKey(key);
     }
 
     public Set<Map.Entry<String, Positions>> entrySet() {
-        return filepathsWithPositions.entrySet();
+        return filepathWithPositions.entrySet();
     }
 }

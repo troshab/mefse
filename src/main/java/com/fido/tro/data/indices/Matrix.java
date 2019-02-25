@@ -69,7 +69,6 @@ public class Matrix extends Searchable {
             return;
         }
         query.or(Objects.requireNonNull(queryPartBits));
-        System.err.println("ored");
     }
 
     public void and(String word, boolean invertArray) {
@@ -78,7 +77,6 @@ public class Matrix extends Searchable {
             return;
         }
         query.and(Objects.requireNonNull(queryPartBits));
-        System.err.println("anded");
     }
 
     public void searchResult() {
