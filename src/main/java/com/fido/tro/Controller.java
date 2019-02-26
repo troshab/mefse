@@ -58,7 +58,7 @@ public class Controller {
                     exception.printStackTrace();
                 }
             });
-            System.out.println("Added file " + filepath);
+            System.out.println("Added file " + oneFilepath);
         }
         System.out.println("Populated");
     }

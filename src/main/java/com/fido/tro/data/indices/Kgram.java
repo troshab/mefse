@@ -49,53 +49,63 @@ public class Kgram extends Inverted {
         List<String> resultQueryParts = new ArrayList<>();
         for(String part : queryParts) {
             if (part.contains("*") && !getModes().contains(part)) {
-                List<String> partsOfWord = Arrays.asList(part.split("\\*"));
-                List<String> relativesWordsGlobal = new ArrayList<>();
-                int partI = 0;
+                List<String> partsOfWord = Arrays.asList(part.split("\\*", -1));
+                Set<String> relativesWordsGlobal = new HashSet<>();
+                int partI = 1;
                 for(String partOfWord : partsOfWord) {
-                    if (partI > 0 && partI < (partsOfWord.size() - 1) && partOfWord.length() < k) {
-                        System.err.println("Middle expressions in wildcard must be more than kgram size.");
-                    } else {
-                        List<String> newRWG = findRelativeWords(partOfWord);
-                        if (relativesWordsGlobal.isEmpty()) {
-                            relativesWordsGlobal.addAll(newRWG);
+                    if (!partOfWord.equals("")) {
+                        if (partI > 0 && partI < (partsOfWord.size() - 1) && partOfWord.length() < k) {
+                            System.err.println("Middle expressions in wildcard must be more than kgram size.");
                         } else {
-                            relativesWordsGlobal.retainAll(newRWG);
+                            List<String> pewNewRWG = findRelativeWords(partOfWord);
+                            List<String> newRWG = new ArrayList<>();
+                            if (partI == 1) {
+                                for (String wt : pewNewRWG) {
+                                    if (wt.substring(0, partOfWord.length()).equals(partOfWord)) {
+                                        newRWG.add(wt);
+                                    }
+                                }
+                            }
+                            else if (partI == partsOfWord.size()) {
+                                for (String wt : pewNewRWG) {
+                                    if (wt.substring(wt.length() - partOfWord.length()).equals(partOfWord)) {
+                                        newRWG.add(wt);
+                                    }
+                                }
+                            } else {
+                                newRWG.addAll(pewNewRWG);
+                            }
+                            if (relativesWordsGlobal.isEmpty()) {
+                                relativesWordsGlobal.addAll(newRWG);
+                            } else {
+                                relativesWordsGlobal.retainAll(newRWG);
+                            }
                         }
                     }
                     partI++;
                 }
-                Set<String> mostRelativeWords = new HashSet<>();
-                Integer relativityLevel = 0;
-                Map<String, Integer> relativeMap = new HashMap<>();
-                for (String word : relativesWordsGlobal) {
-                    if (!relativeMap.containsKey(word))
-                        relativeMap.put(word, 0);
-
-                    relativeMap.put(word, relativeMap.get(word) + 1);
-                }
-                for(Map.Entry<String, Integer> relativeWord : relativeMap.entrySet()) {
-                    Integer entryRelativityLevel = relativeWord.getValue();
-                    if (relativityLevel < entryRelativityLevel) {
-                        relativityLevel = entryRelativityLevel;
-                        mostRelativeWords.clear();
-                    }
-                    if (relativityLevel.equals(entryRelativityLevel)) {
-                        mostRelativeWords.add(relativeWord.getKey());
-                    }
-                }
-                if (mostRelativeWords.isEmpty()) {
+                if (relativesWordsGlobal.isEmpty()) {
                     System.err.println("Error: wildcard word '" + part + "' didn't find in kgram(" + k + ") index");
                     return null;
                 } else {
-                    Iterator<String> mostRelativeWordsIterator = mostRelativeWords.iterator();
+                    boolean first = true;
+                    for(String addWord : relativesWordsGlobal) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            resultQueryParts.add("or");
+                        }
+                        resultQueryParts.add(addWord);
+                    }
+                    /*
+                    Iterator<String> mostRelativeWordsIterator = relativesWordsGlobal.iterator();
                     if (mostRelativeWordsIterator.hasNext()) {
                         resultQueryParts.add(mostRelativeWordsIterator.next());
                         if (mostRelativeWordsIterator.hasNext()) {
                             resultQueryParts.add("or");
                         }
-                    }
-                    System.err.println("Wildcard word \"" + part + "\" replaced as or-expression with: " + mostRelativeWords);
+                    }*/
+                    System.out.println("Wildcard word \"" + part + "\" replaced via kgram(" + k + ") as or-expression with: " + relativesWordsGlobal);
                 }
             } else {
                 resultQueryParts.add(part);

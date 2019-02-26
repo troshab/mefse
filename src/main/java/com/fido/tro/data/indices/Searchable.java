@@ -2,6 +2,7 @@ package com.fido.tro.data.indices;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 abstract class Searchable implements Index {
     private List<String> modes = Arrays.asList("start", "and", "or");
@@ -20,8 +21,13 @@ abstract class Searchable implements Index {
     void search(String condition) {
         List<String> queryParts = Arrays.asList(condition.replaceAll("\\s+", " ").replaceAll("!\\s*", "!").split(" "));
         queryParts = preQuery(queryParts);
-        search(queryParts);
+        if (Objects.nonNull(queryParts)) {
+            search(queryParts);
+        } else {
+            System.err.println("When query has pre-request transforming it failed.");
+        }
     }
+
     List<String> preQuery(List<String> queryParts) {
         return queryParts;
     }
