@@ -1,8 +1,14 @@
 package com.fido.tro.data.indices;
 
 import java.util.Arrays;
+import java.util.List;
 
 abstract class Searchable implements Index {
+    private List<String> modes = Arrays.asList("start", "and", "or");
+    List<String> getModes() {
+        return modes;
+    }
+
     abstract void initSearch(String queryPart, boolean invertArray);
 
     abstract void or(String queryPart, boolean invertArray);
@@ -12,13 +18,16 @@ abstract class Searchable implements Index {
     abstract void searchResult();
 
     void search(String condition) {
-        String[] queryParts = condition.replaceAll("\\s+", " ").replaceAll("!\\s*", "!").split(" ");
+        List<String> queryParts = Arrays.asList(condition.replaceAll("\\s+", " ").replaceAll("!\\s*", "!").split(" "));
+        queryParts = preQuery(queryParts);
         search(queryParts);
     }
+    List<String> preQuery(List<String> queryParts) {
+        return queryParts;
+    }
 
-    private void search(String[] queryParts) {
+    private void search(List<String> queryParts) {
         String mode = "start";
-        String[] modes = {"start", "and", "or"};
 
         for (String queryPart : queryParts) {
             switch (mode) {
@@ -30,12 +39,10 @@ abstract class Searchable implements Index {
                         queryPart = queryPart.substring(1);
                         invertArray = true;
                     }
-
                     if (Arrays.asList(modes).contains(queryPart)) {
                         System.err.println("Error: wrong query (can't repeat logical operators in query)");
                         return;
                     }
-
                     switch (mode) {
                         case "start":
                             initSearch(queryPart, invertArray);
@@ -49,22 +56,18 @@ abstract class Searchable implements Index {
                             or(queryPart, invertArray);
                             break;
                     }
-
                     mode = "";
                     break;
 
                 default:
-                    if (Arrays.stream(modes).noneMatch(queryPart::equals)) {
+                    if (!modes.contains(queryPart)) {
                         System.err.println("Error: wrong query (can't repeat words in query)");
                         return;
                     }
-
                     mode = queryPart.toLowerCase();
                     break;
             }
         }
-
         searchResult();
-
     }
 }

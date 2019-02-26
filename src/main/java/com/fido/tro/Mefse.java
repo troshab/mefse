@@ -8,7 +8,7 @@ public class Mefse {
 
         Router router = new Router();
         router.execCommandLine("populate d:\\df");
-        //router.execCommandLine("find trigram necine and ectarin");
+        router.execCommandLine("find kgram ma*on*ry");
         //router.execCommandLine("save d:\\saved.db");
         //router.execCommandLine("exit");
         do {

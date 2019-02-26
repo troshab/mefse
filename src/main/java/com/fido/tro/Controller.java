@@ -30,7 +30,8 @@ public class Controller {
         indices.put("dictionary", new Dictionary());
         indices.put("inverted", new Inverted());
         indices.put("twoword", new TwoWord());
-        indices.put("trigram", new Trigram());
+        indices.put("kgram", new Kgram(3));
+        indices.put("suffixtree", new SuffixTree());
 
         serializer.add(new Kryo());
         serializer.add(new POJO());
@@ -39,18 +40,18 @@ public class Controller {
     }
 
     void populate(String filename) {
-        List<String> filepaths = FileUtils.getPaths(filename);
+        List<String> filepath = FileUtils.getPaths(filename);
 
         Analyzer analyzer = new StandardAnalyzer();
-        for (String filepath : filepaths) {
-            Stream<String> lines = FileUtils.linesStream(filepath);
+        for (String oneFilepath : filepath) {
+            Stream<String> lines = FileUtils.linesStream(oneFilepath);
             AtomicLong wordPosition = new AtomicLong(0L);
             Objects.requireNonNull(lines).forEach(line -> {
                 try {
                     TokenStream stream = analyzer.tokenStream(null, new StringReader(line));
                     stream.reset();
                     while (stream.incrementToken()) {
-                        add(stream.getAttribute(CharTermAttribute.class).toString(), filepath, wordPosition.getAndIncrement());
+                        add(stream.getAttribute(CharTermAttribute.class).toString(), oneFilepath, wordPosition.getAndIncrement());
                     }
                     stream.close();
                 } catch (IOException exception) {

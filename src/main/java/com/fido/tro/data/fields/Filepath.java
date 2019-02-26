@@ -6,11 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Filepath implements Iterable<String> {
-    private Set<String> filepath;
-
-    public Filepath() {
-        filepath = new LinkedHashSet<>();
-    }
+    private Set<String> filepath = new LinkedHashSet<>();
 
     public void addAll(Filepath addFilepath) {
         filepath.addAll(addFilepath.getFilepath());
