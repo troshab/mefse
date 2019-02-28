@@ -25,12 +25,12 @@ public class Controller {
     private Map<String, Index> indices = new HashMap<>();
 
     Controller() {
-        indices.put("matrix", new Matrix());
+        /*indices.put("matrix", new Matrix());
         indices.put("coordinated", new Coordinated());
         indices.put("dictionary", new Dictionary());
         indices.put("inverted", new Inverted());
-        indices.put("twoword", new TwoWord());
-        indices.put("kgram", new Kgram(3));
+        indices.put("twoword", new TwoWord());*/
+        //indices.put("kgram", new Kgram(2));
         indices.put("suffixtree", new SuffixTree());
 
         serializer.add(new Kryo());

@@ -52,23 +52,31 @@ public class Kgram extends Inverted {
                 List<String> partsOfWord = Arrays.asList(part.split("\\*", -1));
                 Set<String> relativesWordsGlobal = new HashSet<>();
                 int partI = 1;
+                int lastWildcard = 0;
+                if (part.substring(part.length() - 1).equals("*")) {
+                    lastWildcard = 1;
+                }
+                int firstNotWildcard = 1;
+                if (part.substring(0, 1).equals("*")) {
+                    firstNotWildcard = 0;
+                }
                 for(String partOfWord : partsOfWord) {
                     if (!partOfWord.equals("")) {
-                        if (partI > 0 && partI < (partsOfWord.size() - 1) && partOfWord.length() < k) {
+                        if (partI > firstNotWildcard && partI < partsOfWord.size() - lastWildcard && partOfWord.length() < k) {
                             System.err.println("Middle expressions in wildcard must be more than kgram size.");
                         } else {
                             List<String> pewNewRWG = findRelativeWords(partOfWord);
                             List<String> newRWG = new ArrayList<>();
                             if (partI == 1) {
                                 for (String wt : pewNewRWG) {
-                                    if (wt.substring(0, partOfWord.length()).equals(partOfWord)) {
+                                    if (wt.length() >= partOfWord.length() && wt.substring(0, partOfWord.length()).equals(partOfWord)) {
                                         newRWG.add(wt);
                                     }
                                 }
                             }
-                            else if (partI == partsOfWord.size()) {
+                            else if (partI == partsOfWord.size() - lastWildcard) {
                                 for (String wt : pewNewRWG) {
-                                    if (wt.substring(wt.length() - partOfWord.length()).equals(partOfWord)) {
+                                    if (wt.length() >= partOfWord.length() && wt.substring(wt.length() - partOfWord.length()).equals(partOfWord)) {
                                         newRWG.add(wt);
                                     }
                                 }

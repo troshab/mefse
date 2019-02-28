@@ -1,26 +1,22 @@
 package com.fido.tro.data.indices.entity.suffixtree;
 
-public class Edge {
+class Edge {
     private String label;
     private Node dest;
 
-    public String getLabel() {
+    String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    void setLabel(String label) {
         this.label = label;
     }
 
-    public Node getDest() {
+    Node getDest() {
         return dest;
     }
 
-    public void setDest(Node dest) {
-        this.dest = dest;
-    }
-
-    public Edge(String label, Node dest) {
+    Edge(String label, Node dest) {
         this.label = label;
         this.dest = dest;
     }

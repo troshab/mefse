@@ -1,56 +1,37 @@
-/**
- * Copyright 2012 Alessandro Bahgat Shehata
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.fido.tro.data.indices.entity.suffixtree;
+
 import java.util.*;
 
-/**
- * A specialized implementation of Map that uses native char types and sorted
- * arrays to keep minimize the memory footprint.
- * Implements only the operations that are needed within the suffix tree context.
- */
 class EdgeBag {
-    private byte[] chars;
+    private int[] chars;
     private Edge[] values;
     private static final int BSEARCH_THRESHOLD = 6;
 
     public Edge put(Character character, Edge e) {
-        char c = character.charValue();
+        char c = character;
         if (c != (char) (short) c) {
             throw new IllegalArgumentException("Illegal input character " + c + ".");
         }
 
         if (chars == null) {
-            chars = new byte[0];
+            chars = new int[0];
             values = new Edge[0];
         }
         int idx = search(c);
         Edge previous = null;
 
         if (idx < 0) {
-            int currsize = chars.length;
-            byte[] copy = new byte[currsize + 1];
-            System.arraycopy(chars, 0, copy, 0, currsize);
+            int currentSize = chars.length;
+            int[] copy = new int[currentSize + 1];
+            System.arraycopy(chars, 0, copy, 0, currentSize);
             chars = copy;
-            Edge[] copy1 = new Edge[currsize + 1];
-            System.arraycopy(values, 0, copy1, 0, currsize);
+            Edge[] copy1 = new Edge[currentSize + 1];
+            System.arraycopy(values, 0, copy1, 0, currentSize);
             values = copy1;
-            chars[currsize] = (byte) c;
-            values[currsize] = e;
-            currsize++;
-            if (currsize > BSEARCH_THRESHOLD) {
+            chars[currentSize] = (int) c;
+            values[currentSize] = e;
+            currentSize++;
+            if (currentSize > BSEARCH_THRESHOLD) {
                 sortArrays();
             }
         } else {
@@ -61,7 +42,7 @@ class EdgeBag {
     }
 
     public Edge get(Object maybeCharacter) {
-        return get(((Character) maybeCharacter).charValue());  // throws if cast fails.
+        return get(((Character) maybeCharacter).charValue());
     }
 
     public Edge get(char c) {
@@ -81,7 +62,7 @@ class EdgeBag {
             return -1;
 
         if (chars.length > BSEARCH_THRESHOLD) {
-            return Arrays.binarySearch(chars, (byte) c);
+            return Arrays.binarySearch(chars, (int) c);
         }
 
         for (int i = 0; i < chars.length; i++) {
@@ -92,20 +73,15 @@ class EdgeBag {
         return -1;
     }
 
-    public Collection<Edge> values() {
+    Collection<Edge> values() {
         return Arrays.asList(values == null ? new Edge[0] : values);
     }
 
-    /**
-     * A trivial implementation of sort, used to sort chars[] and values[] according to the data in chars.
-     *
-     * It was preferred to faster sorts (like qsort) because of the small sizes (<=36) of the collections involved.
-     */
     private void sortArrays() {
         for (int i = 0; i < chars.length; i++) {
             for (int j = i; j > 0; j--) {
                 if (chars[j-1] > chars[j]) {
-                    byte swap = chars[j];
+                    int swap = chars[j];
                     chars[j] = chars[j-1];
                     chars[j-1] = swap;
 
@@ -115,13 +91,5 @@ class EdgeBag {
                 }
             }
         }
-    }
-
-    public boolean isEmpty() {
-        return chars == null || chars.length == 0;
-    }
-
-    public int size() {
-        return chars == null ? 0 : chars.length;
     }
 }

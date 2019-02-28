@@ -1,28 +1,23 @@
 package com.fido.tro.data.indices;
 
 import com.fido.tro.data.Entity;
-import com.fido.tro.data.indices.entity.suffixtree.Tree;
-
-import java.util.*;
+import com.fido.tro.data.indices.entity.suffixtree.SuffixTreeRoot;
 
 public class SuffixTree extends Inverted {
-    private Tree data = new Tree();
-    private Map<Integer, String> indexToWord = new HashMap<>();
-    private int wordIndex = 1;
+    //private Tree data = new Tree();
+    private SuffixTreeRoot data = new SuffixTreeRoot();
 
     public void add(Entity entity, int fileCounter, String filePath, Long position) {
         String word = entity.getTerm();
 
         if (!super.data.containsKey(word)) {
-            data.put(word, wordIndex);
-            indexToWord.put(wordIndex, word);
-            wordIndex++;
+            data.addNode(word);
         }
 
         super.add(entity, fileCounter, filePath, position);
     }
 
-    @Override
+    /*@Override
     List<String> preQuery(List<String> queryParts) {
         List<String> resultQueryParts = new ArrayList<>();
         for(String part : queryParts) {
@@ -37,12 +32,12 @@ public class SuffixTree extends Inverted {
                         for (Integer resultIndex : results) {
                            String wt = indexToWord.get(resultIndex);
                             if (partI == 1) {
-                                    if (wt.substring(0, partOfWord.length()).equals(partOfWord)) {
+                                    if (wt.length() >= partOfWord.length() && wt.substring(0, partOfWord.length()).equals(partOfWord)) {
                                         possibleWords.add(wt);
                                     }
                             }
                             else if (partI == partsOfWord.size()) {
-                                    if (wt.substring(wt.length() - partOfWord.length()).equals(partOfWord)) {
+                                    if (wt.length() >= partOfWord.length() && wt.substring(wt.length() - partOfWord.length()).equals(partOfWord)) {
                                         possibleWords.add(wt);
                                     }
                             } else {
@@ -78,7 +73,7 @@ public class SuffixTree extends Inverted {
                             resultQueryParts.add("or");
                         }
                     }
-                    */
+                    *
                     System.out.println("Wildcard word \"" + part + "\" replaced via suffixtree as or-expression with: " + relativesWordsGlobal);
                 }
             } else {
@@ -86,5 +81,5 @@ public class SuffixTree extends Inverted {
             }
         }
         return resultQueryParts;
-    }
+    }*/
 }
