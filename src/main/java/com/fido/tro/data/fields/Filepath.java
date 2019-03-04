@@ -12,6 +12,10 @@ public class Filepath implements Iterable<String> {
         filepath.addAll(addFilepath.getFilepath());
     }
 
+    public void addAll(Set<String> filepaths) {
+        filepath.addAll(filepaths);
+    }
+
     private Set<String> getFilepath() {
         return filepath;
     }
@@ -32,5 +36,9 @@ public class Filepath implements Iterable<String> {
     @Nonnull
     public Iterator<String> iterator() {
         return filepath.iterator();
+    }
+
+    public Set<String> allFilepaths() {
+        return this.filepath;
     }
 }

@@ -26,6 +26,7 @@ public class Storage implements Serializable {
     }
 
     public void load(String filename, Serializer serializer) {
-        serializer.getSerializer().load(filename, data);
+        Map<String, Entity> loadData = new HashMap<>();
+        serializer.getSerializer().load(filename, loadData);
     }
 }

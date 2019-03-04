@@ -7,7 +7,8 @@ public class Mefse {
         String commandLine;
 
         Router router = new Router();
-        router.execCommandLine("populate d:\\dt");
+        router.execCommandLine("populate d:\\dta");
+        router.execCommandLine("find bsbi небо");
 
         //router.execCommandLine("find suffixtree в*го*");
         //router.execCommandLine("find kgram в*го*");

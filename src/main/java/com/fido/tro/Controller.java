@@ -25,18 +25,19 @@ public class Controller {
     private Map<String, Index> indices = new HashMap<>();
 
     Controller() {
-        /*indices.put("matrix", new Matrix());
-        indices.put("coordinated", new Coordinated());
-        indices.put("dictionary", new Dictionary());
-        indices.put("inverted", new Inverted());
-        indices.put("twoword", new TwoWord());*/
-        //indices.put("kgram", new Kgram(2));
-        indices.put("suffixtree", new SuffixTree());
-
         serializer.add(new Kryo());
         serializer.add(new POJO());
         serializer.add(new Json());
         serializer.add(new XML());
+
+        /*indices.put("matrix", new Matrix());
+        indices.put("coordinated", new Coordinated());
+        indices.put("dictionary", new Dictionary());
+        indices.put("inverted", new Inverted());
+        indices.put("twoword", new TwoWord());
+        indices.put("kgram", new Kgram(2));*/
+        indices.put("suffixtree", new SuffixTree());
+        indices.put("bsbi", new BSBI(100000, serializer));
     }
 
     void populate(String filename) {

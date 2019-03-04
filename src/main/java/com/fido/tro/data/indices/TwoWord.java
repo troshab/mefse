@@ -3,7 +3,12 @@ package com.fido.tro.data.indices;
 import com.fido.tro.data.Entity;
 import com.fido.tro.data.fields.Filepath;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TwoWord extends Inverted {
+    private Map<String, Filepath> data = new HashMap<>();
+
     private static String previousWord = "";
     private static String previousPath = "";
 

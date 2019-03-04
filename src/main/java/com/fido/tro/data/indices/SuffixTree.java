@@ -1,17 +1,32 @@
 package com.fido.tro.data.indices;
 
 import com.fido.tro.data.Entity;
-import com.fido.tro.data.indices.entity.suffixtree.SuffixTreeRoot;
+import com.fido.tro.data.fields.Filepath;
+import com.fido.tro.data.indices.entity.SuffixTreeNode;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class SuffixTree extends Inverted {
-    //private Tree data = new Tree();
-    private SuffixTreeRoot data = new SuffixTreeRoot();
+    private Map<String, Filepath> data = new HashMap<>();
+    private SuffixTreeNode tree = new SuffixTreeNode();
 
     public void add(Entity entity, int fileCounter, String filePath, Long position) {
         String word = entity.getTerm();
 
-        if (!super.data.containsKey(word)) {
-            data.addNode(word);
+        if (!data.containsKey(word)) {
+            SuffixTreeNode currentNode = tree;
+            SuffixTreeNode childNode;
+            for (int charIndex = 0; charIndex < word.length(); charIndex++) {
+                childNode = currentNode.getNode(word.charAt(charIndex));
+                if (Objects.isNull(childNode)) {
+                    childNode = new SuffixTreeNode();
+                    currentNode.putNode(word.charAt(charIndex), childNode);
+                }
+                currentNode = currentNode.getNode(word.charAt(charIndex));
+            }
+            currentNode.putNode('\0', null);
         }
 
         super.add(entity, fileCounter, filePath, position);

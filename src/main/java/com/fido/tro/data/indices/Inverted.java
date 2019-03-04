@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class Inverted extends Searchable {
 
-    protected Map<String, Filepath> data = new HashMap<>();
+    private Map<String, Filepath> data = new HashMap<>();
 
     private Filepath query = new Filepath();
 
