@@ -38,13 +38,4 @@ public class Entity implements Serializable {
         filepathWithPositions.get(filePath).add(position);
         matrixRow.set(column);
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        if (Mefse.debug) {
-            System.out.println("data.Record successfully garbage cleaned");
-        }
-
-        super.finalize();
-    }
 }

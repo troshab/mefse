@@ -23,6 +23,11 @@ public class Inverted extends Searchable {
         return true;
     }
 
+    @Override
+    public void allAdded() {
+
+    }
+
     public void add(Entity entity, int fileCounter, String filePath, Long position) {
         String word = entity.getTerm();
 

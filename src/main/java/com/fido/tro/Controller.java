@@ -35,9 +35,9 @@ public class Controller {
         indices.put("dictionary", new Dictionary());
         indices.put("inverted", new Inverted());
         indices.put("twoword", new TwoWord());
-        indices.put("kgram", new Kgram(2));*/
-        indices.put("suffixtree", new SuffixTree());
-        indices.put("bsbi", new BSBI(100000, serializer));
+        indices.put("kgram", new Kgram(2));
+        indices.put("suffixtree", new SuffixTree());*/
+        indices.put("bsbi", new BSBI(50000000, serializer));
     }
 
     void populate(String filename) {

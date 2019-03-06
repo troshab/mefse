@@ -4,10 +4,8 @@ import com.fido.tro.data.Entity;
 import com.fido.tro.data.fields.Filepath;
 import com.fido.tro.serializers.Serializer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 public class BSBI extends Inverted {
     private final String BLOCKS_PATH = "d:\\blocks_spimi\\";
@@ -17,14 +15,25 @@ public class BSBI extends Inverted {
     private int blockSizeCompleted = 0;
     private int blockNumber = 0;
 
-    private HashMap<String, Filepath> block = new HashMap<>();
+    private Map<String, Filepath> block = new HashMap<>();
 
     public BSBI(int blocksSize, Serializer serializer){
         this.blocksSize = blocksSize - 1;
         this.serializer = serializer;
     }
 
-    @Override
+    void saveBlock() {
+        serializer.getSerializer().save(BLOCKS_PATH + "block_" + blockNumber + ".bin", block, false);
+        blockNumber++;
+        blockSizeCompleted = 0;
+        block.clear();
+        System.gc();
+    }
+
+    public void allAdded() {
+        saveBlock();
+    }
+
     public void add(Entity entity, int fileCounter, String filePath, Long position) {
         String word = entity.getTerm();
 
@@ -34,10 +43,7 @@ public class BSBI extends Inverted {
         block.get(word).add(filePath);
 
         if (blockSizeCompleted++ == blocksSize) {
-            serializer.getSerializer().save(BLOCKS_PATH + "block_" + blockNumber + ".bin", block, false);
-            blockNumber++;
-            blockSizeCompleted = 0;
-            block = new HashMap<>();
+            saveBlock();
         }
     }
 

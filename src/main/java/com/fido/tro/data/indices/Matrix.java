@@ -36,6 +36,11 @@ public class Matrix extends Searchable {
         return true;
     }
 
+    @Override
+    public void allAdded() {
+
+    }
+
     public void add(Entity entity, int fileNumber, String filePath, Long position) {
         header.put(fileNumber - 1, filePath);
         body.put(entity.getTerm(), entity.getMatrixRow());

@@ -7,4 +7,5 @@ public interface Index {
     void add(Entity entity, int fileNumber, String filepath, Long position);
     void list();
     boolean isSearchable(String query);
+    void allAdded();
 }

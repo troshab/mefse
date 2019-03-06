@@ -16,6 +16,11 @@ public class Dictionary implements Index {
         return false;
     }
 
+    @Override
+    public void allAdded() {
+
+    }
+
     public void add(Entity entity, int fileCounter, String filePath, Long position) {
         data.add(entity.getTerm());
     }
