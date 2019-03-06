@@ -1,6 +1,6 @@
 package com.fido.tro.data.indices;
 
-import com.fido.tro.data.Entity;
+import com.fido.tro.data.Record;
 
 import java.util.*;
 
@@ -30,9 +30,9 @@ public class Kgram extends Inverted {
         return "trigrams in index variation of inverted index";
     }
 
-    public void add(Entity entity, int fileCounter, String filePath, Long position) {
-        List<String> trigrams = wordTrigrams(entity.getTerm());
-        String word = entity.getTerm();
+    public void add(Record record, int fileCounter, String filePath, Long position) {
+        List<String> trigrams = wordTrigrams(record.getTerm());
+        String word = record.getTerm();
         for (String trigram : trigrams) {
             if (!trigramsData.containsKey(trigram)) {
                 trigramsData.put(trigram, new HashSet<>());
@@ -40,7 +40,7 @@ public class Kgram extends Inverted {
             }
             trigramsData.get(trigram).add(word);
 
-            super.add(entity, fileCounter, filePath, position);
+            super.add(record, fileCounter, filePath, position);
         }
     }
 

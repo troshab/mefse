@@ -1,7 +1,6 @@
 package com.fido.tro;
 
-import com.fido.tro.data.Entity;
-import com.fido.tro.data.Storage;
+import com.fido.tro.data.Record;
 import com.fido.tro.data.indices.*;
 import com.fido.tro.serializers.*;
 import com.fido.tro.utils.FileUtils;
@@ -20,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 public class Controller {
-    private Storage storage = new Storage();
+    private int filesCount = 0;
     private Serializer serializer = new Serializer();
     private Map<String, Index> indices = new HashMap<>();
 
@@ -30,13 +29,13 @@ public class Controller {
         serializer.add(new Json());
         serializer.add(new XML());
 
-        /*indices.put("matrix", new Matrix());
+        indices.put("matrix", new Matrix());
         indices.put("coordinated", new Coordinated());
         indices.put("dictionary", new Dictionary());
         indices.put("inverted", new Inverted());
         indices.put("twoword", new TwoWord());
-        indices.put("kgram", new Kgram(2));
-        indices.put("suffixtree", new SuffixTree());*/
+        //indices.put("kgram", new Kgram(2));
+        //indices.put("suffixtree", new SuffixTree());
         indices.put("bsbi", new BSBI(50000000, serializer));
     }
 
@@ -45,6 +44,7 @@ public class Controller {
 
         Analyzer analyzer = new StandardAnalyzer();
         for (String oneFilepath : filepath) {
+            filesCount++;
             Stream<String> lines = FileUtils.linesStream(oneFilepath);
             AtomicLong wordPosition = new AtomicLong(0L);
             Objects.requireNonNull(lines).forEach(line -> {
@@ -71,20 +71,12 @@ public class Controller {
     }
 
     public void add(String word, String filePath, Long position) {
-        Entity record;
-
-        record = storage.data.get(word);
-        if (Objects.isNull(record)) {
-            record = new Entity(word);
-        }
-        storage.files.add(filePath);
-        int filesCount = storage.files.size();
+        Record record = new Record(word);
         record.addPosition(filePath, filesCount - 1, position);
-        storage.data.put(word, record);
         addToIndices(record, filesCount, filePath, position);
     }
 
-    private void addToIndices(Entity record, int filesCounter, String filePath, Long position) {
+    private void addToIndices(Record record, int filesCounter, String filePath, Long position) {
         for (Index index : indices.values())
             index.add(record, filesCounter, filePath, position);
     }
@@ -111,11 +103,11 @@ public class Controller {
     }
 
     void load(String filename) {
-        storage.load(filename, serializer);
+        //storage.load(filename, serializer);
     }
 
     void save(String filename) {
-        storage.save(filename, serializer);
+        //storage.save(filename, serializer);
     }
 
     String listSerializers() {

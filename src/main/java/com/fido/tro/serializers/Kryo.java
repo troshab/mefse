@@ -2,7 +2,7 @@ package com.fido.tro.serializers;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.fido.tro.data.Entity;
+import com.fido.tro.data.Record;
 import com.fido.tro.data.fields.*;
 
 import java.io.FileInputStream;
@@ -26,7 +26,7 @@ public class Kryo extends AbstractSerializer {
 
     private void registerKryoClasses(com.esotericsoftware.kryo.Kryo kryo) {
         kryo.register(HashMap.class);
-        kryo.register(Entity.class);
+        kryo.register(Record.class);
         kryo.register(Filepath.class);
         kryo.register(LinkedHashSet.class);
         kryo.register(FilepathWithPositions.class);

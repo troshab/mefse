@@ -1,10 +1,9 @@
 package com.fido.tro.data.indices;
 
-import com.fido.tro.data.Entity;
+import com.fido.tro.data.Record;
 import com.fido.tro.data.fields.Filepath;
 import com.fido.tro.serializers.Serializer;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class BSBI extends Inverted {
@@ -34,8 +33,8 @@ public class BSBI extends Inverted {
         saveBlock();
     }
 
-    public void add(Entity entity, int fileCounter, String filePath, Long position) {
-        String word = entity.getTerm();
+    public void add(Record record, int fileCounter, String filePath, Long position) {
+        String word = record.getTerm();
 
         if (!block.containsKey(word))
             block.put(word, new Filepath());

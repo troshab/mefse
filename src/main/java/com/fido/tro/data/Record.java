@@ -8,13 +8,13 @@ import com.fido.tro.data.fields.Term;
 
 import java.io.Serializable;
 
-public class Entity implements Serializable {
+public class Record implements Serializable {
     private Term term;
     private Filepath filepath;
     private FilepathWithPositions filepathWithPositions;
     private MatrixRow matrixRow;
 
-    public Entity(String word) {
+    public Record(String word) {
         term = new Term(word);
         constructorAdditional();
     }

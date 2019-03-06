@@ -1,6 +1,6 @@
 package com.fido.tro.data.indices;
 
-import com.fido.tro.data.Entity;
+import com.fido.tro.data.Record;
 import com.fido.tro.data.fields.Filepath;
 
 import java.util.HashMap;
@@ -28,8 +28,8 @@ public class Inverted extends Searchable {
 
     }
 
-    public void add(Entity entity, int fileCounter, String filePath, Long position) {
-        String word = entity.getTerm();
+    public void add(Record record, int fileCounter, String filePath, Long position) {
+        String word = record.getTerm();
 
         if (!data.containsKey(word))
             data.put(word, new Filepath());

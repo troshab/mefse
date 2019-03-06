@@ -1,6 +1,6 @@
 package com.fido.tro.data.indices;
 
-import com.fido.tro.data.Entity;
+import com.fido.tro.data.Record;
 import com.fido.tro.data.fields.MatrixRow;
 
 import java.util.HashMap;
@@ -41,9 +41,14 @@ public class Matrix extends Searchable {
 
     }
 
-    public void add(Entity entity, int fileNumber, String filePath, Long position) {
+    public void add(Record record, int fileNumber, String filePath, Long position) {
         header.put(fileNumber - 1, filePath);
-        body.put(entity.getTerm(), entity.getMatrixRow());
+        MatrixRow newMatrix = record.getMatrixRow();
+        MatrixRow currentMatrix = body.get(record.getTerm());
+        if (Objects.nonNull(currentMatrix)) {
+            newMatrix.or(currentMatrix);
+        }
+        body.put(record.getTerm(), newMatrix);
     }
 
     public void list() {

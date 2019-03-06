@@ -1,6 +1,6 @@
 package com.fido.tro.data.indices;
 
-import com.fido.tro.data.Entity;
+import com.fido.tro.data.Record;
 import com.fido.tro.data.fields.Filepath;
 
 import java.util.HashMap;
@@ -22,24 +22,24 @@ public class TwoWord extends Inverted {
         return false;
     }
 
-    public void add(Entity entity, String filePath) {
+    public void add(Record record, String filePath) {
         if (!previousPath.equals(filePath)) {
             previousWord = "";
             previousPath = filePath;
         }
 
         if (previousWord.isEmpty()) {
-            previousWord = entity.getTerm();
+            previousWord = record.getTerm();
             return;
         }
 
-        String key = previousWord + " " + entity.getTerm();
+        String key = previousWord + " " + record.getTerm();
 
         if (!data.containsKey(key))
             data.put(key, new Filepath());
 
         data.get(key).add(filePath);
 
-        previousWord = entity.getTerm();
+        previousWord = record.getTerm();
     }
 }

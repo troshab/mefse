@@ -1,6 +1,6 @@
 package com.fido.tro.data.indices;
 
-import com.fido.tro.data.Entity;
+import com.fido.tro.data.Record;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,8 +21,8 @@ public class Dictionary implements Index {
 
     }
 
-    public void add(Entity entity, int fileCounter, String filePath, Long position) {
-        data.add(entity.getTerm());
+    public void add(Record record, int fileCounter, String filePath, Long position) {
+        data.add(record.getTerm());
     }
 
     public void list() {
