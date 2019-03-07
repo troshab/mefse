@@ -1,24 +1,25 @@
 package com.fido.tro.data.indices;
 
+import com.fido.tro.cli.CliBenchmark;
 import com.fido.tro.data.Record;
 import com.fido.tro.data.indices.entities.Filepath;
+import com.fido.tro.data.indices.threading.CustomThreadPool;
+import com.fido.tro.data.indices.threading.FindInSPIMI;
+import com.fido.tro.data.indices.threading.SaveSPIMIBlock;
 import com.fido.tro.serializers.Serializer;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import static java.lang.Thread.MAX_PRIORITY;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class SPIMI extends Inverted {
-    int processorsCount = Runtime.getRuntime().availableProcessors();
+    private int processorsCount = Runtime.getRuntime().availableProcessors();
 
     private final String BLOCKS_PATH = "d:\\blocks_spimi\\";
     /**
      * Direct GC call is bad so consider
      */
-    private boolean weAreBadAndDirty = false;
     private Serializer serializer;
 
     /** MEMORY MAGIC BEGINS (ツ)_/ ﾟ.*・｡ﾟ
@@ -29,9 +30,10 @@ public class SPIMI extends Inverted {
 
     private long allocatedMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
     private long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
-    int poolSize = 4;
-    Set<String> findedInFiles = new LinkedHashSet<>();
+
+    private Set<String> findedInFiles = new LinkedHashSet<>();
     private long usedMemoryTotal = 0L;
+    private Boolean savingToMemory = false;
 
     /**
      * onlyStringSize:
@@ -76,63 +78,74 @@ public class SPIMI extends Inverted {
         this.serializer = serializer;
     }
 
-    private void saveBlock() {
-        serializer.getSerializer().save(BLOCKS_PATH + "block_" + blockNumber + ".bin", block, false);
-        blockNumber++;
-        usedMemoryTotal = 0L;
-        block.clear();
-        if (weAreBadAndDirty) {
-            badAndDirtyGC();
+    private double memoryLimitCoefficient = 0.5;
+
+    private void saveBlock(boolean searchSave) {
+
+        CliBenchmark cliBenchmark = new CliBenchmark(true);
+        synchronized (block) {
+            SaveSPIMIBlock saveSPIMIBlock = new SaveSPIMIBlock(block, BLOCKS_PATH + "block_" + blockNumber + ".bin");
+            new Thread(saveSPIMIBlock).start();
+            usedMemoryTotal = 0L;
+            blockNumber++;
+            block.clear();
+            synchronized (savingToMemory) {
+                savingToMemory = false;
+            }
         }
+
+        cliBenchmark.timeTaken(true);
+
         System.out.println("Saved to block");
     }
 
     public void add(Record record, int fileCounter, String filePath, Long position) {
         String word = record.getTerm();
 
-        if (!block.containsKey(word)) {
-            block.put(word, new Filepath());
-            usedMemoryTotal += calculateMemorySize(word);
+        synchronized (block) {
+            if (!block.containsKey(word)) {
+                block.put(word, new Filepath());
+                usedMemoryTotal += calculateMemorySize(word);
+            }
+            Filepath wordInMap;
+            do {
+                wordInMap = block.get(word);
+            } while (wordInMap == null);
+            wordInMap.add(filePath);
+            usedMemoryTotal += calculateMemorySize(filePath);
         }
-
-        block.get(word).add(filePath);
-        usedMemoryTotal += calculateMemorySize(filePath);
-
-        if (blockMemoryLimit <= usedMemoryTotal) {
-            saveBlock();
+        synchronized (savingToMemory) {
+            if (!savingToMemory && blockMemoryLimit <= usedMemoryTotal) {
+                savingToMemory = true;
+                saveBlock(false);
+            }
         }
     }
-
-    private void badAndDirtyGC() {
-        System.gc();
-        System.runFinalization();
-    }
-
-    private double memoryLimitCoefficient = 0.75;
     private long blockMemoryLimit = Math.round((presumableFreeMemory * memoryLimitCoefficient) / processorsCount);
 
     protected Filepath findSetForWord(String word, boolean invertArray) {
         if (!block.isEmpty()) {
             System.out.println("Has unsaved block.");
-            saveBlock();
+            saveBlock(true);
         }
 
-        int blockNumberCurrent = blockNumber;
+        CliBenchmark cliBenchmark = new CliBenchmark(true);
+        int blockNumberCurrent = 0;
         findedInFiles.clear();
-        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        while(blockNumberCurrent-- > 0) {
-            executor.execute(new Processor(BLOCKS_PATH + "block_" + blockNumberCurrent + ".bin", word));
+        CustomThreadPool customThreadPool = new CustomThreadPool(processorsCount);
+        while (blockNumberCurrent < blockNumber) {
+            FindInSPIMI findTask = new FindInSPIMI(BLOCKS_PATH + "block_" + blockNumberCurrent + ".bin", word, serializer, findedInFiles);
+            do {
+            } while (customThreadPool.queue.size() > processorsCount);
+            customThreadPool.execute(findTask);
+            blockNumberCurrent++;
+            //findTask.run();
         }
-
-        executor.shutdown();
-        try {
-            executor.awaitTermination(MAX_PRIORITY, TimeUnit.HOURS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        customThreadPool.shutdown();
+        cliBenchmark.timeTaken(true);
 
         if (findedInFiles.isEmpty()) {
-            System.err.println("Error: word '" + word + "' didn't find in inverted index");
+            System.err.println("Error: word '" + word + "' didn't find in SPIM index");
             return null;
         }
 
@@ -146,34 +159,4 @@ public class SPIMI extends Inverted {
         }
         return queryPartSet;
     }
-
-    private class Processor implements Runnable {
-        private final String filepath;
-        private final String word;
-
-        Processor(String filepath, String word) {
-            this.filepath = filepath;
-            this.word = word;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void run() {
-            System.err.println(Thread.currentThread().getId() + "#: " + filepath);
-            Map<String, Filepath> fileBlock = new HashMap<>();
-            fileBlock = (HashMap<String, Filepath>) serializer.getSerializer().load(filepath, fileBlock, false);
-            Filepath fileQueryPartSet = fileBlock.get(word);
-            if (Objects.nonNull(fileQueryPartSet)) {
-                findedInFiles.addAll(fileQueryPartSet.allFilepaths());
-                System.err.println(Thread.currentThread().getId() + "#: " + findedInFiles);
-            } else {
-                System.err.println(Thread.currentThread().getId() + "#: none");
-            }
-            fileBlock.clear();
-            if (weAreBadAndDirty) {
-                badAndDirtyGC();
-            }
-        }
-    }
-
 }

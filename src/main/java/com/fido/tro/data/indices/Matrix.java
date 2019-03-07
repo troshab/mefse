@@ -37,13 +37,18 @@ public class Matrix extends Searchable {
     }
 
     public void add(Record record, int fileNumber, String filePath, Long position) {
-        header.put(fileNumber - 1, filePath);
-        MatrixRow newMatrix = record.getMatrixRow();
-        MatrixRow currentMatrix = body.get(record.getTerm());
-        if (Objects.nonNull(currentMatrix)) {
-            newMatrix.or(currentMatrix);
+        synchronized (body) {
+            synchronized (header) {
+                header.put(fileNumber - 1, filePath);
+            }
+
+            MatrixRow newMatrix = record.getMatrixRow();
+            MatrixRow currentMatrix = body.get(record.getTerm());
+            if (Objects.nonNull(currentMatrix)) {
+                newMatrix.or(currentMatrix);
+            }
+            body.put(record.getTerm(), newMatrix);
         }
-        body.put(record.getTerm(), newMatrix);
     }
 
     public void list() {

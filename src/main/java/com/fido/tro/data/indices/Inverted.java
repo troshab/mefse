@@ -26,10 +26,12 @@ public class Inverted extends Searchable {
     public void add(Record record, int fileCounter, String filePath, Long position) {
         String word = record.getTerm();
 
-        if (!data.containsKey(word))
-            data.put(word, new Filepath());
+        synchronized (data) {
+            if (!data.containsKey(word))
+                data.put(word, new Filepath());
 
-        data.get(word).add(filePath);
+            data.get(word).add(filePath);
+        }
     }
 
 

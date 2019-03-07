@@ -23,23 +23,25 @@ public class TwoWord extends Inverted {
     }
 
     public void add(Record record, String filePath) {
-        if (!previousPath.equals(filePath)) {
-            previousWord = "";
-            previousPath = filePath;
-        }
+        synchronized (previousPath) {
+            if (!previousPath.equals(filePath)) {
+                previousWord = "";
+                previousPath = filePath;
+            }
 
-        if (previousWord.isEmpty()) {
+            if (previousWord.isEmpty()) {
+                previousWord = record.getTerm();
+                return;
+            }
+
+            String key = previousWord + " " + record.getTerm();
+
+            if (!data.containsKey(key))
+                data.put(key, new Filepath());
+
+            data.get(key).add(filePath);
+
             previousWord = record.getTerm();
-            return;
         }
-
-        String key = previousWord + " " + record.getTerm();
-
-        if (!data.containsKey(key))
-            data.put(key, new Filepath());
-
-        data.get(key).add(filePath);
-
-        previousWord = record.getTerm();
     }
 }

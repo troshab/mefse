@@ -9,12 +9,26 @@ public class Mefse {
         String commandLine;
 
         Router router = new Router();
-        router.execCommandLine("populate d:\\bigdata");
         CliBenchmark cliBenchmark = new CliBenchmark(true);
+        router.execCommandLine("populate d:\\bigdata");
+        router.execCommandLine("find spimi trump");
+        router.execCommandLine("find spimi donald");
+        cliBenchmark.timeTaken(true);
+        /*cliBenchmark = new CliBenchmark(true);
         router.execCommandLine("find spimi test");
         router.execCommandLine("find spimi lol");
         router.execCommandLine("find spimi trump");
         cliBenchmark.timeTaken();
+        cliBenchmark = new CliBenchmark(true);
+        router.execCommandLine("find spimi test");
+        router.execCommandLine("find spimi lol");
+        router.execCommandLine("find spimi trump");
+        cliBenchmark.timeTaken();
+        cliBenchmark = new CliBenchmark(true);
+        router.execCommandLine("find spimi test");
+        router.execCommandLine("find spimi lol");
+        router.execCommandLine("find spimi trump");
+        cliBenchmark.timeTaken(true);
 
         //router.execCommandLine("find suffixtree в*го*");
         //router.execCommandLine("find kgram в*го*");

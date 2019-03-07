@@ -15,18 +15,22 @@ public class SuffixTree extends Inverted {
     public void add(Record record, int fileCounter, String filePath, Long position) {
         String word = record.getTerm();
 
-        if (!data.containsKey(word)) {
-            SuffixTreeNode currentNode = tree;
-            SuffixTreeNode childNode;
-            for (int charIndex = 0; charIndex < word.length(); charIndex++) {
-                childNode = currentNode.getNode(word.charAt(charIndex));
-                if (Objects.isNull(childNode)) {
-                    childNode = new SuffixTreeNode();
-                    currentNode.putNode(word.charAt(charIndex), childNode);
+        synchronized (data) {
+            if (!data.containsKey(word)) {
+                synchronized (tree) {
+                    SuffixTreeNode currentNode = tree;
+                    SuffixTreeNode childNode;
+                    for (int charIndex = 0; charIndex < word.length(); charIndex++) {
+                        childNode = currentNode.getNode(word.charAt(charIndex));
+                        if (Objects.isNull(childNode)) {
+                            childNode = new SuffixTreeNode();
+                            currentNode.putNode(word.charAt(charIndex), childNode);
+                        }
+                        currentNode = currentNode.getNode(word.charAt(charIndex));
+                    }
+                    currentNode.putNode('\0', null);
                 }
-                currentNode = currentNode.getNode(word.charAt(charIndex));
             }
-            currentNode.putNode('\0', null);
         }
 
         super.add(record, fileCounter, filePath, position);

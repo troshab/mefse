@@ -1,28 +1,24 @@
 package com.fido.tro;
 
-import com.fido.tro.data.Record;
 import com.fido.tro.data.indices.Index;
 import com.fido.tro.data.indices.SPIMI;
+import com.fido.tro.data.indices.threading.CustomThreadPool;
+import com.fido.tro.data.indices.threading.InitialLineParsing;
 import com.fido.tro.serializers.*;
 import com.fido.tro.utils.FileUtils;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 public class Controller {
+    public static Serializer serializer = new Serializer();
+
     private int filesCount = 0;
-    private Serializer serializer = new Serializer();
-    private Map<String, Index> indices = new HashMap<>();
+    public static Map<String, Index> indices = new HashMap<>();
+    private int processorsCount = Runtime.getRuntime().availableProcessors();
 
     Controller() {
         serializer.add(new Kryo());
@@ -42,38 +38,22 @@ public class Controller {
 
     void populate(String filename) {
         List<String> filepath = FileUtils.getPaths(filename);
-
-        Analyzer analyzer = new StandardAnalyzer();
+        CustomThreadPool customThreadPool = new CustomThreadPool(processorsCount);
         for (String oneFilepath : filepath) {
             filesCount++;
             Stream<String> lines = FileUtils.linesStream(oneFilepath);
-            AtomicLong wordPosition = new AtomicLong(0L);
+            Long wordPosition = 0L;
             Objects.requireNonNull(lines).forEach(line -> {
-                try {
-                    TokenStream stream = analyzer.tokenStream(null, new StringReader(line));
-                    stream.reset();
-                    while (stream.incrementToken()) {
-                        add(stream.getAttribute(CharTermAttribute.class).toString(), oneFilepath, wordPosition.getAndIncrement());
-                    }
-                    stream.close();
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
+                InitialLineParsing initialLineParsing = new InitialLineParsing(filesCount, line, oneFilepath, wordPosition);
+                do {
+                } while (customThreadPool.queue.size() > processorsCount);
+                customThreadPool.execute(initialLineParsing);
+                //initialLineParsing.run();
             });
             System.out.println("Added file " + oneFilepath);
         }
+        customThreadPool.shutdown();
         System.out.println("Populated");
-    }
-
-    public void add(String word, String filePath, Long position) {
-        Record record = new Record(word);
-        record.addPosition(filePath, filesCount - 1, position);
-        addToIndices(record, filesCount, filePath, position);
-    }
-
-    private void addToIndices(Record record, int filesCounter, String filePath, Long position) {
-        for (Index index : indices.values())
-            index.add(record, filesCounter, filePath, position);
     }
 
     void find(String engineType, String query) {

@@ -8,6 +8,13 @@ import java.util.Set;
 public class Filepath implements Iterable<String> {
     private Set<String> filepath = new LinkedHashSet<>();
 
+    public Filepath() {
+    }
+
+    public Filepath(Filepath value) {
+        filepath.addAll(value.getFilepath());
+    }
+
     public void addAll(Filepath addFilepath) {
         filepath.addAll(addFilepath.getFilepath());
     }

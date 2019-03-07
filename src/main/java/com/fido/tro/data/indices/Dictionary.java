@@ -17,7 +17,9 @@ public class Dictionary implements Index {
     }
 
     public void add(Record record, int fileCounter, String filePath, Long position) {
-        data.add(record.getTerm());
+        synchronized (data) {
+            data.add(record.getTerm());
+        }
     }
 
     public void list() {

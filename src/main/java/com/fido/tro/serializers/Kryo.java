@@ -12,10 +12,11 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Kryo extends AbstractSerializer {
     int processorsCount = Runtime.getRuntime().availableProcessors();
-    Pool<com.esotericsoftware.kryo.Kryo> kryoPool = new Pool<com.esotericsoftware.kryo.Kryo>(true, false, processorsCount) {
+    Pool<com.esotericsoftware.kryo.Kryo> kryoPool = new Pool<com.esotericsoftware.kryo.Kryo>(true, true, processorsCount) {
         protected com.esotericsoftware.kryo.Kryo create() {
             com.esotericsoftware.kryo.Kryo kryo = new com.esotericsoftware.kryo.Kryo();
             registerKryoClasses(kryo);
@@ -30,6 +31,7 @@ public class Kryo extends AbstractSerializer {
 
     private void registerKryoClasses(com.esotericsoftware.kryo.Kryo kryo) {
         kryo.register(HashMap.class);
+        kryo.register(ConcurrentHashMap.class);
         kryo.register(Record.class);
         kryo.register(Filepath.class);
         kryo.register(LinkedHashSet.class);
@@ -40,16 +42,22 @@ public class Kryo extends AbstractSerializer {
         kryo.register(BitSet.class);
         kryo.register(long[].class);
         kryo.register(Term.class);
+        kryo.register(Long.class);
     }
 
     @Override
     public Object loadObject(FileInputStream fis, Class objectClass) {
         com.esotericsoftware.kryo.Kryo kryo = kryoPool.obtain();
-        Input input = new Input(fis);
-        Object readObject = kryo.readObject(input, objectClass);
-        input.close();
-        kryoPool.free(kryo);
-        return readObject;
+        try {
+            Input input = new Input(fis);
+            Object readObject = kryo.readObject(input, objectClass);
+            input.close();
+            kryoPool.free(kryo);
+            return readObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

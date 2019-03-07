@@ -31,16 +31,18 @@ public class Kgram extends Inverted {
     }
 
     public void add(Record record, int fileCounter, String filePath, Long position) {
-        List<String> trigrams = wordTrigrams(record.getTerm());
-        String word = record.getTerm();
-        for (String trigram : trigrams) {
-            if (!trigramsData.containsKey(trigram)) {
-                trigramsData.put(trigram, new HashSet<>());
+        synchronized (trigramsData) {
+            List<String> trigrams = wordTrigrams(record.getTerm());
+            String word = record.getTerm();
+            for (String trigram : trigrams) {
+                if (!trigramsData.containsKey(trigram)) {
+                    trigramsData.put(trigram, new HashSet<>());
 
+                }
+                trigramsData.get(trigram).add(word);
+
+                super.add(record, fileCounter, filePath, position);
             }
-            trigramsData.get(trigram).add(word);
-
-            super.add(record, fileCounter, filePath, position);
         }
     }
 
