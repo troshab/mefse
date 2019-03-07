@@ -8,6 +8,9 @@ public class Mefse {
 
         Router router = new Router();
         router.execCommandLine("populate d:\\bigdata");
+        router.execCommandLine("find spimi небо and гори");
+        router.execCommandLine("find spimi небо and земля");
+        router.execCommandLine("find spimi гори and земля");
 
         //router.execCommandLine("find suffixtree в*го*");
         //router.execCommandLine("find kgram в*го*");
