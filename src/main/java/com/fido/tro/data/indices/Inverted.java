@@ -1,7 +1,7 @@
 package com.fido.tro.data.indices;
 
 import com.fido.tro.data.Record;
-import com.fido.tro.data.fields.Filepath;
+import com.fido.tro.data.indices.entities.Filepath;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +21,6 @@ public class Inverted extends Searchable {
     public boolean isSearchable(String query) {
         search(query);
         return true;
-    }
-
-    @Override
-    public void allAdded() {
-
     }
 
     public void add(Record record, int fileCounter, String filePath, Long position) {

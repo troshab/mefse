@@ -29,14 +29,14 @@ public class Controller {
         serializer.add(new Json());
         serializer.add(new XML());
 
-        indices.put("matrix", new Matrix());
+        /*indices.put("matrix", new Matrix());
         indices.put("coordinated", new Coordinated());
         indices.put("dictionary", new Dictionary());
         indices.put("inverted", new Inverted());
-        indices.put("twoword", new TwoWord());
+        indices.put("twoword", new TwoWord());*/
         //indices.put("kgram", new Kgram(2));
         //indices.put("suffixtree", new SuffixTree());
-        indices.put("bsbi", new BSBI(50000000, serializer));
+        indices.put("spimi", new SPIMI(serializer));
     }
 
     void populate(String filename) {

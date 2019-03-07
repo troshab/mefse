@@ -7,11 +7,7 @@ public class Mefse {
         String commandLine;
 
         Router router = new Router();
-        router.execCommandLine("populate d:\\dt");
-        router.execCommandLine("find inverted aa and bb");
-        router.execCommandLine("find matrix aa and bb");
-        router.execCommandLine("find inverted aa or bb or cc");
-        router.execCommandLine("find matrix aa or bb or cc");
+        router.execCommandLine("populate d:\\bigdata");
 
         //router.execCommandLine("find suffixtree в*го*");
         //router.execCommandLine("find kgram в*го*");

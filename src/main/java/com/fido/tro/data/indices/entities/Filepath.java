@@ -1,4 +1,4 @@
-package com.fido.tro.data.fields;
+package com.fido.tro.data.indices.entities;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;

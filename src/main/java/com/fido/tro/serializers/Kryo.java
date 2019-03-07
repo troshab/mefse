@@ -3,7 +3,7 @@ package com.fido.tro.serializers;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fido.tro.data.Record;
-import com.fido.tro.data.fields.*;
+import com.fido.tro.data.indices.entities.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package com.fido.tro.data.fields;
+package com.fido.tro.data.indices.entities;
 
 public class FilepathWithId extends Filepath {
     private Integer id;

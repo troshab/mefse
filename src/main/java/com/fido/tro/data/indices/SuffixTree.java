@@ -1,8 +1,8 @@
 package com.fido.tro.data.indices;
 
 import com.fido.tro.data.Record;
-import com.fido.tro.data.fields.Filepath;
-import com.fido.tro.data.indices.entity.SuffixTreeNode;
+import com.fido.tro.data.indices.entities.Filepath;
+import com.fido.tro.data.indices.entities.SuffixTreeNode;
 
 import java.util.HashMap;
 import java.util.Map;

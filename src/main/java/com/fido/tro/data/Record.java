@@ -1,10 +1,9 @@
 package com.fido.tro.data;
 
-import com.fido.tro.Mefse;
-import com.fido.tro.data.fields.Filepath;
-import com.fido.tro.data.fields.FilepathWithPositions;
-import com.fido.tro.data.fields.MatrixRow;
-import com.fido.tro.data.fields.Term;
+import com.fido.tro.data.indices.entities.Filepath;
+import com.fido.tro.data.indices.entities.FilepathWithPositions;
+import com.fido.tro.data.indices.entities.MatrixRow;
+import com.fido.tro.data.indices.entities.Term;
 
 import java.io.Serializable;
 

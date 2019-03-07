@@ -1,4 +1,4 @@
-package com.fido.tro.data.indices.entity;
+package com.fido.tro.data.indices.entities;
 
 import java.util.*;
 

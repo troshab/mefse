@@ -1,7 +1,7 @@
 package com.fido.tro.data.indices;
 
-import com.fido.tro.data.fields.FilepathWithPositions;
-import com.fido.tro.data.fields.Positions;
+import com.fido.tro.data.indices.entities.FilepathWithPositions;
+import com.fido.tro.data.indices.entities.Positions;
 
 import java.util.HashMap;
 import java.util.List;
