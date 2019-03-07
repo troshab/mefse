@@ -1,7 +1,8 @@
 package com.fido.tro;
 
 import com.fido.tro.data.Record;
-import com.fido.tro.data.indices.*;
+import com.fido.tro.data.indices.Index;
+import com.fido.tro.data.indices.SPIMI;
 import com.fido.tro.serializers.*;
 import com.fido.tro.utils.FileUtils;
 import org.apache.lucene.analysis.Analyzer;
@@ -62,12 +63,6 @@ public class Controller {
             System.out.println("Added file " + oneFilepath);
         }
         System.out.println("Populated");
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        System.out.println("data.data successfully garbage cleaned");
-        super.finalize();
     }
 
     public void add(String word, String filePath, Long position) {

@@ -7,16 +7,24 @@ import com.fido.tro.serializers.Serializer;
 import java.util.*;
 
 public class SPIMI extends Inverted {
-    /* MEMORY MAGIC ¯\_(ツ)_/¯ */
 
+    private final String BLOCKS_PATH = "d:\\blocks_spimi\\";
     /**
+     * Direct GC call is bad so consider
+     */
+    private boolean weAreBadAndDirty = false;
+    private Serializer serializer;
+
+    /** MEMORY MAGIC BEGINS (ツ)_/ ﾟ.*・｡ﾟ
+     *
      * allocatedMemory - already allocated memory
      * presumableFreeMemory - memory that really available for us
      */
-    long allocatedMemory      = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
-    long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
 
-    private long blockMemoryLimit = Math.round(presumableFreeMemory * 0.5);
+    private long allocatedMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
+    private long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
+
+    private long blockMemoryLimit = Math.round(presumableFreeMemory * 0.0005);
     private long usedMemoryTotal = 0L;
     /**
      * onlyStringSize:
@@ -37,12 +45,12 @@ public class SPIMI extends Inverted {
      *  calculateMemorySize return in bytes
      */
 
-    String arch = System.getenv("PROCESSOR_ARCHITECTURE");
-    String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
+    private String arch = System.getenv("PROCESSOR_ARCHITECTURE");
+    private String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
 
-    private int processArchitectureLinkSize = arch != null && arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64")  ? 8 : 4;
+    private int processArchitectureLinkSize = arch != null && arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ? 8 : 4;
 
-    int onlyStringSize = 8 + 4 * 3 + processArchitectureLinkSize;
+    private int onlyStringSize = 8 + 4 * 3 + processArchitectureLinkSize;
     private int calculateMemorySize(String string) {
         int onlyCharArraySize = 8 + 4 + 2 * string.length();
         int diff = onlyCharArraySize % 8;
@@ -51,10 +59,7 @@ public class SPIMI extends Inverted {
         return (onlyStringSize + stabilizedCharArraySize) / 8;
     }
 
-    /* END OF MAGIC */
-
-    private final String BLOCKS_PATH = "d:\\blocks_spimi\\";
-    private final Serializer serializer;
+    /** MEMORY MAGIC ENDS ¯\_(ツ)_/¯ */
 
     private int blockNumber = 0;
 
@@ -64,12 +69,14 @@ public class SPIMI extends Inverted {
         this.serializer = serializer;
     }
 
-    void saveBlock() {
+    private void saveBlock() {
         serializer.getSerializer().save(BLOCKS_PATH + "block_" + blockNumber + ".bin", block, false);
         blockNumber++;
         usedMemoryTotal = 0L;
         block.clear();
-        badAndDirtyGC();
+        if (weAreBadAndDirty) {
+            badAndDirtyGC();
+        }
         System.out.println("Saved to block");
     }
 
@@ -89,11 +96,12 @@ public class SPIMI extends Inverted {
         }
     }
 
-    void badAndDirtyGC() {
+    private void badAndDirtyGC() {
         System.gc();
         System.runFinalization();
     }
 
+    @SuppressWarnings("unchecked")
     protected Filepath findSetForWord(String word, boolean invertArray) {
         if (!block.isEmpty()) {
             System.out.println("Has unsaved block.");
@@ -112,7 +120,9 @@ public class SPIMI extends Inverted {
                 findedInFiles.addAll(fileQueryPartSet.allFilepaths());
             }
             fileBlock.clear();
-            badAndDirtyGC();
+            if (weAreBadAndDirty) {
+                badAndDirtyGC();
+            }
         }
 
         if (findedInFiles.isEmpty()) {
