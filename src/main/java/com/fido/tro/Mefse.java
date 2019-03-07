@@ -1,5 +1,7 @@
 package com.fido.tro;
 
+import com.fido.tro.cli.CliBenchmark;
+
 public class Mefse {
     public static boolean debug = true;
 
@@ -7,8 +9,12 @@ public class Mefse {
         String commandLine;
 
         Router router = new Router();
-        router.execCommandLine("populate d:\\d");
-        router.execCommandLine("find spimi гори");
+        router.execCommandLine("populate d:\\bigdata");
+        CliBenchmark cliBenchmark = new CliBenchmark(true);
+        router.execCommandLine("find spimi test");
+        router.execCommandLine("find spimi lol");
+        router.execCommandLine("find spimi trump");
+        cliBenchmark.timeTaken();
 
         //router.execCommandLine("find suffixtree в*го*");
         //router.execCommandLine("find kgram в*го*");

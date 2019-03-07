@@ -2,6 +2,7 @@ package com.fido.tro.serializers;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.util.Pool;
 import com.fido.tro.data.Record;
 import com.fido.tro.data.indices.entities.*;
 
@@ -13,15 +14,18 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 public class Kryo extends AbstractSerializer {
-    private com.esotericsoftware.kryo.Kryo kryo = new com.esotericsoftware.kryo.Kryo();
+    int processorsCount = Runtime.getRuntime().availableProcessors();
+    Pool<com.esotericsoftware.kryo.Kryo> kryoPool = new Pool<com.esotericsoftware.kryo.Kryo>(true, false, processorsCount) {
+        protected com.esotericsoftware.kryo.Kryo create() {
+            com.esotericsoftware.kryo.Kryo kryo = new com.esotericsoftware.kryo.Kryo();
+            registerKryoClasses(kryo);
+            return kryo;
+        }
+    };
 
     @Override
     public String description() {
         return "Kryo is a fast and efficient binary object graph serialization framework for Java. The goals of the project are high speed, low size, and an easy to use API.";
-    }
-
-    public Kryo() {
-        registerKryoClasses(kryo);
     }
 
     private void registerKryoClasses(com.esotericsoftware.kryo.Kryo kryo) {
@@ -40,15 +44,18 @@ public class Kryo extends AbstractSerializer {
 
     @Override
     public Object loadObject(FileInputStream fis, Class objectClass) {
+        com.esotericsoftware.kryo.Kryo kryo = kryoPool.obtain();
         Input input = new Input(fis);
         Object readObject = kryo.readObject(input, objectClass);
         input.close();
+        kryoPool.free(kryo);
         return readObject;
     }
 
 
     @Override
     public boolean saveObject(FileOutputStream fos, Object engine) {
+        com.esotericsoftware.kryo.Kryo kryo = kryoPool.obtain();
         try {
             Output output = new Output(fos);
             kryo.writeObject(output, engine);
@@ -57,6 +64,7 @@ public class Kryo extends AbstractSerializer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        kryoPool.free(kryo);
         return false;
     }
 }

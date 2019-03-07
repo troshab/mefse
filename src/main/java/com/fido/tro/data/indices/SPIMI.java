@@ -5,8 +5,14 @@ import com.fido.tro.data.indices.entities.Filepath;
 import com.fido.tro.serializers.Serializer;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.Thread.MAX_PRIORITY;
 
 public class SPIMI extends Inverted {
+    int processorsCount = Runtime.getRuntime().availableProcessors();
 
     private final String BLOCKS_PATH = "d:\\blocks_spimi\\";
     /**
@@ -23,9 +29,10 @@ public class SPIMI extends Inverted {
 
     private long allocatedMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
     private long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
-
-    private long blockMemoryLimit = Math.round(presumableFreeMemory * 0.0005);
+    int poolSize = 4;
+    Set<String> findedInFiles = new LinkedHashSet<>();
     private long usedMemoryTotal = 0L;
+
     /**
      * onlyStringSize:
      *  new String ()
@@ -101,28 +108,27 @@ public class SPIMI extends Inverted {
         System.runFinalization();
     }
 
-    @SuppressWarnings("unchecked")
+    private double memoryLimitCoefficient = 0.75;
+    private long blockMemoryLimit = Math.round((presumableFreeMemory * memoryLimitCoefficient) / processorsCount);
+
     protected Filepath findSetForWord(String word, boolean invertArray) {
         if (!block.isEmpty()) {
             System.out.println("Has unsaved block.");
             saveBlock();
         }
 
-        Filepath queryPartSet;
-
         int blockNumberCurrent = blockNumber;
-        Set<String> findedInFiles = new HashSet<>();
+        findedInFiles.clear();
+        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         while(blockNumberCurrent-- > 0) {
-            Map<String, Filepath> fileBlock = new HashMap<>();
-            fileBlock = (HashMap<String, Filepath>) serializer.getSerializer().load(BLOCKS_PATH + "block_" + blockNumberCurrent + ".bin", fileBlock, false);
-            Filepath fileQueryPartSet = fileBlock.get(word);
-            if (Objects.nonNull(fileQueryPartSet)) {
-                findedInFiles.addAll(fileQueryPartSet.allFilepaths());
-            }
-            fileBlock.clear();
-            if (weAreBadAndDirty) {
-                badAndDirtyGC();
-            }
+            executor.execute(new Processor(BLOCKS_PATH + "block_" + blockNumberCurrent + ".bin", word));
+        }
+
+        executor.shutdown();
+        try {
+            executor.awaitTermination(MAX_PRIORITY, TimeUnit.HOURS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         if (findedInFiles.isEmpty()) {
@@ -130,7 +136,7 @@ public class SPIMI extends Inverted {
             return null;
         }
 
-        queryPartSet = new Filepath();
+        Filepath queryPartSet = new Filepath();
         queryPartSet.addAll(findedInFiles);
 
         if (invertArray) {
@@ -140,4 +146,34 @@ public class SPIMI extends Inverted {
         }
         return queryPartSet;
     }
+
+    private class Processor implements Runnable {
+        private final String filepath;
+        private final String word;
+
+        Processor(String filepath, String word) {
+            this.filepath = filepath;
+            this.word = word;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void run() {
+            System.err.println(Thread.currentThread().getId() + "#: " + filepath);
+            Map<String, Filepath> fileBlock = new HashMap<>();
+            fileBlock = (HashMap<String, Filepath>) serializer.getSerializer().load(filepath, fileBlock, false);
+            Filepath fileQueryPartSet = fileBlock.get(word);
+            if (Objects.nonNull(fileQueryPartSet)) {
+                findedInFiles.addAll(fileQueryPartSet.allFilepaths());
+                System.err.println(Thread.currentThread().getId() + "#: " + findedInFiles);
+            } else {
+                System.err.println(Thread.currentThread().getId() + "#: none");
+            }
+            fileBlock.clear();
+            if (weAreBadAndDirty) {
+                badAndDirtyGC();
+            }
+        }
+    }
+
 }
