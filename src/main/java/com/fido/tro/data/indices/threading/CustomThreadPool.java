@@ -8,6 +8,7 @@ public class CustomThreadPool {
     //Thread pool size
     private final int poolSize;
     private final WorkerThread[] workers;
+    private Boolean forcedInterrupt = false;
 
     public CustomThreadPool(int poolSize) {
         this.poolSize = poolSize;
@@ -29,9 +30,16 @@ public class CustomThreadPool {
 
     public void shutdown() {
         System.out.println("Shutting down thread pool");
+        synchronized (forcedInterrupt) {
+            forcedInterrupt = true;
+        }
         for (int i = 0; i < poolSize; i++) {
+            do {
+            } while (queue.size() > 0);
+            workers[i].interrupt();
             workers[i] = null;
         }
+        System.out.println("Pool is shutted down.");
     }
 
     private class WorkerThread extends Thread {
@@ -44,7 +52,9 @@ public class CustomThreadPool {
                         try {
                             queue.wait();
                         } catch (InterruptedException e) {
-                            System.out.println("An error occurred while queue is waiting: " + e.getMessage());
+                            if (!forcedInterrupt) {
+                                System.out.println("An error occurred while queue is waiting: " + e.getMessage());
+                            }
                         }
                     }
                     try {

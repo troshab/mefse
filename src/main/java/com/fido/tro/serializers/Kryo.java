@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Kryo extends AbstractSerializer {
     int processorsCount = Runtime.getRuntime().availableProcessors();
-    Pool<com.esotericsoftware.kryo.Kryo> kryoPool = new Pool<com.esotericsoftware.kryo.Kryo>(true, true, processorsCount) {
+    Pool<com.esotericsoftware.kryo.Kryo> kryoPool = new Pool<com.esotericsoftware.kryo.Kryo>(true, false, processorsCount * 2) {
         protected com.esotericsoftware.kryo.Kryo create() {
             com.esotericsoftware.kryo.Kryo kryo = new com.esotericsoftware.kryo.Kryo();
             registerKryoClasses(kryo);
@@ -47,12 +47,17 @@ public class Kryo extends AbstractSerializer {
 
     @Override
     public Object loadObject(FileInputStream fis, Class objectClass) {
-        com.esotericsoftware.kryo.Kryo kryo = kryoPool.obtain();
+        com.esotericsoftware.kryo.Kryo kryo;
+        synchronized (kryoPool) {
+            kryo = kryoPool.obtain();
+        }
         try {
             Input input = new Input(fis);
             Object readObject = kryo.readObject(input, objectClass);
             input.close();
-            kryoPool.free(kryo);
+            synchronized (kryoPool) {
+                kryoPool.free(kryo);
+            }
             return readObject;
         } catch (Exception e) {
             e.printStackTrace();

@@ -14,11 +14,11 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Controller {
+    private int processorsCount = Runtime.getRuntime().availableProcessors();
     public static Serializer serializer = new Serializer();
 
     private int filesCount = 0;
     public static Map<String, Index> indices = new HashMap<>();
-    private int processorsCount = Runtime.getRuntime().availableProcessors();
 
     Controller() {
         serializer.add(new Kryo());
@@ -38,7 +38,7 @@ public class Controller {
 
     void populate(String filename) {
         List<String> filepath = FileUtils.getPaths(filename);
-        CustomThreadPool customThreadPool = new CustomThreadPool(processorsCount);
+        CustomThreadPool fileLinesCustomThreadPool = new CustomThreadPool(processorsCount);
         for (String oneFilepath : filepath) {
             filesCount++;
             Stream<String> lines = FileUtils.linesStream(oneFilepath);
@@ -46,13 +46,13 @@ public class Controller {
             Objects.requireNonNull(lines).forEach(line -> {
                 InitialLineParsing initialLineParsing = new InitialLineParsing(filesCount, line, oneFilepath, wordPosition);
                 do {
-                } while (customThreadPool.queue.size() > processorsCount);
-                customThreadPool.execute(initialLineParsing);
+                } while (fileLinesCustomThreadPool.queue.size() > processorsCount);
+                fileLinesCustomThreadPool.execute(initialLineParsing);
                 //initialLineParsing.run();
             });
             System.out.println("Added file " + oneFilepath);
         }
-        customThreadPool.shutdown();
+        fileLinesCustomThreadPool.shutdown();
         System.out.println("Populated");
     }
 

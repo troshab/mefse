@@ -15,6 +15,8 @@ import java.util.Set;
 
 public class SPIMI extends Inverted {
     private int processorsCount = Runtime.getRuntime().availableProcessors();
+    private double memoryLimitCoefficient = 1;
+    private int blockNumber = 0;
 
     private final String BLOCKS_PATH = "d:\\blocks_spimi\\";
     /**
@@ -70,28 +72,29 @@ public class SPIMI extends Inverted {
 
     /** MEMORY MAGIC ENDS ¯\_(ツ)_/¯ */
 
-    private int blockNumber = 0;
-
     private Map<String, Filepath> block = new HashMap<>();
 
     public SPIMI(Serializer serializer){
         this.serializer = serializer;
     }
 
-    private double memoryLimitCoefficient = 0.5;
-
     private void saveBlock(boolean searchSave) {
 
         CliBenchmark cliBenchmark = new CliBenchmark(true);
+        Map<String, Filepath> oldBlock;
         synchronized (block) {
-            SaveSPIMIBlock saveSPIMIBlock = new SaveSPIMIBlock(block, BLOCKS_PATH + "block_" + blockNumber + ".bin");
-            new Thread(saveSPIMIBlock).start();
-            usedMemoryTotal = 0L;
-            blockNumber++;
-            block.clear();
-            synchronized (savingToMemory) {
-                savingToMemory = false;
-            }
+            oldBlock = block;
+            block = new HashMap<>();
+        }
+
+        SaveSPIMIBlock saveSPIMIBlock = new SaveSPIMIBlock(oldBlock, BLOCKS_PATH + "block_" + blockNumber + ".bin");
+        new Thread(saveSPIMIBlock).start();
+
+        usedMemoryTotal = 0L;
+        blockNumber++;
+
+        synchronized (savingToMemory) {
+            savingToMemory = false;
         }
 
         cliBenchmark.timeTaken(true);

@@ -10,10 +10,10 @@ public class Mefse {
 
         Router router = new Router();
         CliBenchmark cliBenchmark = new CliBenchmark(true);
-        router.execCommandLine("populate d:\\bigdata");
+        //router.execCommandLine("populate d:\\bigdata");
+        cliBenchmark.timeTaken(true);
         router.execCommandLine("find spimi trump");
         router.execCommandLine("find spimi donald");
-        cliBenchmark.timeTaken(true);
         /*cliBenchmark = new CliBenchmark(true);
         router.execCommandLine("find spimi test");
         router.execCommandLine("find spimi lol");
@@ -59,12 +59,12 @@ public class Mefse {
 
         System.out.println("\nfull test\n");
         router.execCommandLine("find suffixtree ban* and *ple");
-        router.execCommandLine("find kgram ban* and *ple");*/
+        router.execCommandLine("find kgram ban* and *ple");
 
         //router.execCommandLine("save d:\\saved.db");
         //router.execCommandLine("exit");
         do {
             commandLine = router.getCommandLine();
-        } while (router.execCommandLine(commandLine));
+        } while (router.execCommandLine(commandLine));*/
     }
 }

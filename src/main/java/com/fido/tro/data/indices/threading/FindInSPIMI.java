@@ -29,10 +29,9 @@ public class FindInSPIMI implements Runnable {
         Filepath fileQueryPartSet = fileBlock.get(word);
         if (Objects.nonNull(fileQueryPartSet)) {
             findedInFiles.addAll(fileQueryPartSet.allFilepaths());
-            System.err.println(Thread.currentThread().getId() + "#: " + findedInFiles);
-        } else {
-            System.err.println(Thread.currentThread().getId() + "#: none");
-        }
-        fileBlock.clear();
+            //System.err.println(Thread.currentThread().getId() + "#: " + findedInFiles);
+        }/* else {
+            //System.err.println(Thread.currentThread().getId() + "#: none");
+        }*/
     }
 }
